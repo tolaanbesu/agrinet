@@ -1,0 +1,293 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                 String             @id @default(uuid())
+  email              String             @unique
+  name               String?
+  emailVerified      Boolean
+  image              String?
+  role               Role               @default(BUYER)
+  phone              String?
+  location           String?
+  profileImage       String?
+  verificationStatus VerificationStatus @default(PENDING)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  accounts           Account[]
+  articles           Article[]
+  auditLogs          AuditLog[]
+  cart               Cart?
+  receivedMessages   Chat[]             @relation("ReceivedMessages")
+  sentMessages       Chat[]             @relation("SentMessages")
+  farmerQueries      FarmerQuery[]
+  marketAlerts       MarketAlert[]
+  orders             Order[]            @relation("BuyerOrders")
+  farmerOrders       Order[]            @relation("FarmerOrders")
+  products           Product[]
+  reportsReceived    Report[]           @relation("ReportsReceived")
+  reportsSent        Report[]           @relation("ReportsSent")
+  sessions           Session[]
+
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime
+  updatedAt DateTime
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime
+  updatedAt             DateTime
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("account")
+}
+
+model Verification {
+  id         String    @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
+
+  @@map("verification")
+}
+
+model Product {
+  id          String        @id @default(uuid())
+  farmerId    String
+  name        String
+  category    String
+  description String
+  price       Float
+  quantity    Float
+  unit        String
+  images      String[]
+  location    String
+  status      ProductStatus @default(AVAILABLE)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  cartItems   CartItem[]
+  orderItems  OrderItem[]
+  farmer      User          @relation(fields: [farmerId], references: [id], onDelete: Cascade)
+
+  @@index([farmerId])
+  @@index([category])
+  @@map("product")
+}
+
+model Cart {
+  id        String     @id @default(uuid())
+  buyerId   String     @unique
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  buyer     User       @relation(fields: [buyerId], references: [id], onDelete: Cascade)
+  items     CartItem[]
+
+  @@map("cart")
+}
+
+model CartItem {
+  id        String  @id @default(uuid())
+  cartId    String
+  productId String
+  quantity  Float
+  cart      Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([cartId])
+  @@index([productId])
+  @@map("cart_item")
+}
+
+model Order {
+  id            String        @id @default(uuid())
+  buyerId       String
+  farmerId      String
+  totalPrice    Float
+  status        OrderStatus   @default(PENDING)
+  paymentStatus PaymentStatus @default(PENDING)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  tx_ref        String?
+  buyer         User          @relation("BuyerOrders", fields: [buyerId], references: [id])
+  farmer        User          @relation("FarmerOrders", fields: [farmerId], references: [id])
+  items         OrderItem[]
+
+  @@index([buyerId])
+  @@index([farmerId])
+  @@map("order")
+}
+
+model OrderItem {
+  id        String  @id @default(uuid())
+  orderId   String
+  productId String
+  quantity  Float
+  price     Float
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id])
+
+  @@index([orderId])
+  @@index([productId])
+  @@map("order_item")
+}
+
+model Chat {
+  id         String   @id @default(uuid())
+  senderId   String
+  receiverId String
+  message    String
+  read       Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  receiver   User     @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  sender     User     @relation("SentMessages", fields: [senderId], references: [id])
+
+  @@index([senderId])
+  @@index([receiverId])
+  @@map("chat")
+}
+
+model Article {
+  id        String   @id @default(uuid())
+  expertId  String
+  title     String
+  content   String
+  category  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  imageUrl  String?
+  expert    User     @relation(fields: [expertId], references: [id])
+
+  @@index([expertId])
+  @@map("article")
+}
+
+model FarmerQuery {
+  id             String      @id @default(uuid())
+  farmerId       String
+  question       String
+  expertResponse String?
+  status         QueryStatus @default(OPEN)
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  expertId       String
+  farmer         User        @relation(fields: [farmerId], references: [id])
+
+  @@index([farmerId])
+  @@map("farmer_query")
+}
+
+model MarketAlert {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  region      String
+  postedById  String
+  createdAt   DateTime @default(now())
+  postedBy    User     @relation(fields: [postedById], references: [id])
+
+  @@index([postedById])
+  @@map("market_alert")
+}
+
+model Report {
+  id             String   @id @default(uuid())
+  reporterId     String
+  reportedUserId String
+  reason         String
+  createdAt      DateTime @default(now())
+  reportedUser   User     @relation("ReportsReceived", fields: [reportedUserId], references: [id])
+  reporter       User     @relation("ReportsSent", fields: [reporterId], references: [id])
+
+  @@index([reporterId])
+  @@index([reportedUserId])
+  @@map("report")
+}
+
+model AuditLog {
+  id          String   @id @default(uuid())
+  action      String
+  performedBy String
+  timestamp   DateTime @default(now())
+  user        User     @relation(fields: [performedBy], references: [id])
+
+  @@index([performedBy])
+  @@map("audit_log")
+}
+
+model jwks {
+  id         String   @id @default(cuid())
+  publicKey  String
+  privateKey String
+  createdAt  DateTime @default(now())
+}
+
+enum Role {
+  FARMER
+  BUYER
+  EXPERT
+  ADMIN
+}
+
+enum VerificationStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+enum ProductStatus {
+  AVAILABLE
+  OUT_OF_STOCK
+  DRAFT
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum QueryStatus {
+  OPEN
+  RESOLVED
+  CLOSED
+}
