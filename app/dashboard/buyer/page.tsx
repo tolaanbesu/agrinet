@@ -49,7 +49,7 @@ export default async function BuyerDashboard() {
         take: 5,
         include: {
             items: {
-            include: { product: true }
+            include: { product: {select: { farmerId: true }}}
             }
         }
     });
@@ -112,7 +112,7 @@ export default async function BuyerDashboard() {
 
     return (
         <div className="space-y-8">
-            <div className="flex items-center justify-between">
+            {/* <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight">Buyer Dashboard</h1>
                     <p className="text-muted-foreground mt-1">
@@ -125,6 +125,41 @@ export default async function BuyerDashboard() {
                         Browse Marketplace
                     </Button>
                 </Link>
+            </div> */}
+            <div className="flex items-center justify-between">
+                <div>
+                    <h1 className="text-3xl font-bold tracking-tight">Buyer Dashboard</h1>
+                    <p className="text-muted-foreground mt-1">
+                        Welcome back, {session.user.name}. Find fresh products from local farmers.
+                    </p>
+                </div>
+
+                <div className="flex items-center gap-2">
+                    {/* PROFILE */}
+                    <Link
+                        href="/dashboard/profile"
+                        className="px-4 py-2 rounded-lg bg-muted hover:bg-muted/70 transition text-sm"
+                    >
+                        My Profile
+                    </Link>
+
+                    {/* COMPLETE PROFILE */}
+                    {/* {!session.user.phone || !session.user.location ? (
+                        <Link
+                            href="/dashboard/profile/edit"
+                            className="px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm"
+                        >
+                            Complete Profile
+                        </Link>
+                    ) : null} */}
+
+                    <Link href="/marketplace">
+                        <Button className="gap-2">
+                            <ShoppingBag className="h-4 w-4" />
+                            Browse Marketplace
+                        </Button>
+                    </Link>
+                </div>
             </div>
 
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -163,6 +198,13 @@ export default async function BuyerDashboard() {
                                 <p className="text-xs text-muted-foreground">
                                 {order.items.length} item(s) — Status: {order.status}
                                 </p>
+                                {/* REPORT FARMER */}
+                                <Link
+                                    href={`/dashboard/report/${order.items[0]?.product?.farmerId}`}
+                                    className="text-xs text-red-500 hover:underline"
+                                >
+                                    Report Seller
+                                </Link>
                             </div>
                             ))
                         ) : (

@@ -100,12 +100,40 @@ export default async function FarmerDashboard() {
                 </div>
             </Link>
 
+            {/* <div className="flex justify-between items-end">
+                <div>
+                    <h1 className="text-3xl font-bold tracking-tight">Farmer Dashboard</h1>
+                    <p className="text-muted-foreground mt-1">
+                        Welcome back, {session.user.name}. Here's your farm's performance.
+                    </p>
+                </div>
+            </div> */}
             <div className="flex justify-between items-end">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight">Farmer Dashboard</h1>
                     <p className="text-muted-foreground mt-1">
                         Welcome back, {session.user.name}. Here's your farm's performance.
                     </p>
+                </div>
+
+                {/* PROFILE ACTIONS */}
+                <div className="flex gap-2">
+                    <Link
+                        href="/dashboard/profile"
+                        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-muted hover:bg-muted/70 transition"
+                    >
+                        <Users className="w-4 h-4" />
+                        My Profile
+                    </Link>
+                    {/* {!session.user.phone || !session.user.location ? (
+                    <Link
+                        href="/dashboard/profile/edit"
+                        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:opacity-90 transition"
+                    >
+                        Complete Profile
+                        <ArrowRight className="w-4 h-4" />
+                    </Link>
+                   ) : null} */}
                 </div>
             </div>
 
@@ -152,6 +180,16 @@ export default async function FarmerDashboard() {
                                     <div className="space-y-1">
                                         <p className="text-sm font-semibold">{order.buyer?.name || "Customer"}</p>
                                         <p className="text-xs text-muted-foreground uppercase font-bold tracking-tighter">{order.status}</p>
+
+                                        {/* REPORT BUTTON */}
+                                        {order.buyer && (
+                                            <Link
+                                                href={`/dashboard/report/${order.buyer.id}`}
+                                                className="text-xs text-red-500 hover:underline"
+                                            >
+                                                Report Buyer
+                                            </Link>
+                                        )}
                                     </div>
                                     <div className="text-sm font-bold">{order.totalPrice.toFixed(2)} ETB</div>
                                 </div>

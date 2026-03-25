@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { auth } from "@/lib/auth"; 
 import { headers } from "next/headers"; 
 import { revalidatePath } from "next/cache"; 
+import Image from "next/image";
 
 export default async function ArticleDetailsPage({
     params,
@@ -83,10 +84,16 @@ export default async function ArticleDetailsPage({
 
             {article.imageUrl && (
                 <div className="rounded-2xl overflow-hidden aspect-video border shadow-2xl transition-transform hover:scale-[1.01] duration-500">
-                    <img
+                    {/* <img
                         src={article.imageUrl}
                         alt={article.title}
                         className="w-full h-full object-cover"
+                    /> */}
+                    <Image
+                    src={article.imageUrl}
+                    alt={article.title}
+                    fill
+                    className="object-cover"
                     />
                 </div>
             )}
