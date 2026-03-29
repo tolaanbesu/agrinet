@@ -19,7 +19,7 @@ export default async function AlertsPage() {
         orderBy: { createdAt: "desc" },
         include: {
             postedBy: {
-                select: { name: true }
+                select: { name: true, verificationStatus: true }
             }
         }
     });
@@ -72,7 +72,7 @@ export default async function AlertsPage() {
                                                     <MapPin className="w-3 h-3 mr-1" />
                                                     {alert.region}
                                                 </Badge>
-                                                <Badge variant="outline" className="bg-white">
+                                                <Badge variant="outline" className="bg-white text-gray-700">
                                                     Market Trend
                                                 </Badge>
                                             </div>
@@ -105,7 +105,7 @@ export default async function AlertsPage() {
                                                         {alert.postedBy?.name}
                                                     </p>
                                                     <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
-                                                        Verified Expert
+                                                        {alert.postedBy?.verificationStatus === "VERIFIED" ? "Verified Expert" : "Not Verified"}
                                                     </p>
                                                 </div>
                                             </div>
