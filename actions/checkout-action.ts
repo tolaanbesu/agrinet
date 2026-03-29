@@ -10,6 +10,7 @@ import prisma from "@/lib/prisma"
 
 export async function placeOrderAction(data: { phone: string, address: string, paymentMethod: string }) {
 
+    const APP_URL = process.env.NEXT_PUBLIC_APP_URL;
     const session = await auth.api.getSession({
         headers: await headers(),
     })
@@ -77,9 +78,11 @@ export async function placeOrderAction(data: { phone: string, address: string, p
                     first_name: session.user.name || "Customer",
 
                     tx_ref,
-
-                    callback_url: "http://localhost:3000/api/payment/verify",
-                    return_url: `http://localhost:3000/api/payment/verify?tx_ref=${tx_ref}`,
+                    
+                    callback_url: `${APP_URL}/api/payment/verify`,
+                    return_url: `${APP_URL}/api/payment/verify?tx_ref=${tx_ref}`,
+                    // callback_url: "http://localhost:3000/api/payment/verify",
+                    // return_url: `http://localhost:3000/api/payment/verify?tx_ref=${tx_ref}`,
                     // return_url: "http://localhost:3000/dashboard/buyer/orders"
                 },
                 {
