@@ -2,10 +2,17 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { User, Phone, MapPin, Upload, X, Loader2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner"; 
 
 export default function EditProfilePage() {
   const router = useRouter();
-
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  
   const [form, setForm] = useState({
     name: "",
     phone: "",
@@ -25,11 +32,17 @@ export default function EditProfilePage() {
           location: data.location || "",
         });
         setRole(data.role);
+        setLoading(false);
+      })
+      .catch(() => {
+        toast.error("Failed to load profile data");
+        setLoading(false);
       });
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitting(true);
 
     const formData = new FormData();
     formData.append("name", form.name);
@@ -40,95 +53,149 @@ export default function EditProfilePage() {
       formData.append("document", file);
     }
 
-    await fetch("/api/profile", {
-      method: "POST",
-      body: formData,
-    });
+    try {
+      const res = await fetch("/api/profile", {
+        method: "POST",
+        body: formData,
+      });
 
-    router.push("/dashboard/profile");
-    router.refresh();
+      if (!res.ok) throw new Error();
+
+      toast.success("Profile updated successfully");
+      router.push("/dashboard/profile");
+      router.refresh();
+    } catch (error) {
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden border border-slate-100">
+    <div className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-card rounded-xl w-full max-w-md shadow-2xl overflow-hidden border border-border animate-in fade-in zoom-in duration-200">
+        
         {/* Header */}
-        <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/50">
-          <h2 className="text-xl font-semibold text-slate-800">Edit Profile</h2>
-          <p className="text-sm text-slate-500">Update your account information</p>
+        <div className="px-6 py-5 border-b flex justify-between items-center bg-muted/30">
+          <div>
+            <h2 className="text-xl font-semibold tracking-tight">Edit Profile</h2>
+            <p className="text-sm text-muted-foreground">Update your personal information</p>
+          </div>
+          <button 
+            onClick={() => router.back()} 
+            className="text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <X size={20} />
+          </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-5">
-          {/* Name Field */}
-          <div className="space-y-1.5">
-            <label className="text-sm font-medium text-slate-700 ml-1">Full Name</label>
-            <input
-              placeholder="e.g. John Doe"
-              className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none text-slate-900"
-              value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
-            />
+        {loading ? (
+          <div className="p-12 flex flex-col items-center justify-center gap-2">
+            <Loader2 className="animate-spin text-primary" size={32} />
+            <p className="text-sm text-muted-foreground">Loading profile...</p>
           </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="p-6 space-y-5">
+            {/* Name Field */}
+            <div className="space-y-2">
+              <Label htmlFor="name" className="flex items-center gap-2">
+                <User size={14} className="text-muted-foreground" /> Full Name
+              </Label>
+              <Input
+                id="name"
+                placeholder="John Doe"
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                className="h-11"
+                required
+              />
+            </div>
 
-          {/* Phone Field */}
-          <div className="space-y-1.5">
-            <label className="text-sm font-medium text-slate-700 ml-1">Phone Number</label>
-            <input
-              placeholder="0912345678"
-              className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none text-slate-900"
-              value={form.phone}
-              onChange={(e) => setForm({ ...form, phone: e.target.value })}
-            />
-          </div>
+            {/* Phone Field */}
+            <div className="space-y-2">
+              <Label htmlFor="phone" className="flex items-center gap-2">
+                <Phone size={14} className="text-muted-foreground" /> Phone Number
+              </Label>
+              <Input
+                id="phone"
+                placeholder="+251..."
+                value={form.phone}
+                onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                className="h-11"
+              />
+            </div>
 
-          {/* Location Field */}
-          <div className="space-y-1.5">
-            <label className="text-sm font-medium text-slate-700 ml-1">Location</label>
-            <input
-              placeholder="City, Country"
-              className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none text-slate-900"
-              value={form.location}
-              onChange={(e) => setForm({ ...form, location: e.target.value })}
-            />
-          </div>
+            {/* Location Field */}
+            <div className="space-y-2">
+              <Label htmlFor="location" className="flex items-center gap-2">
+                <MapPin size={14} className="text-muted-foreground" /> Location
+              </Label>
+              <Input
+                id="location"
+                placeholder="City, Country"
+                value={form.location}
+                onChange={(e) => setForm({ ...form, location: e.target.value })}
+                className="h-11"
+              />
+            </div>
 
-          {/* File Upload (Farmer Only) */}
-          {role === "FARMER" && (
-            <div className="space-y-1.5">
-              <label className="text-sm font-medium text-slate-700 ml-1">Verification Document</label>
-              <div className="relative border-2 border-dashed border-slate-300 rounded-lg p-4 hover:bg-slate-50 transition-colors group">
-                <input
-                  type="file"
-                  onChange={(e) => setFile(e.target.files?.[0] || null)}
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                />
-                <div className="text-center">
-                  <span className="text-sm text-slate-600">
-                    {file ? file.name : "Click to upload or drag and drop"}
-                  </span>
+            {/* File Upload (Farmer Only) */}
+            {role === "FARMER" && (
+              <div className="space-y-2 pt-2">
+                <Label className="flex items-center gap-2 text-primary">
+                  <Upload size={14} /> Verification Document
+                </Label>
+                <div className="relative group">
+                  <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-muted-foreground/20 rounded-lg cursor-pointer bg-muted/10 hover:bg-muted/30 transition-all hover:border-primary/50">
+                    <div className="flex flex-col items-center justify-center py-4">
+                      <Upload size={20} className="text-muted-foreground mb-1 group-hover:text-primary transition-colors" />
+                      <p className="text-xs text-muted-foreground px-4 text-center">
+                        {file ? (
+                          <span className="text-primary font-medium">{file.name}</span>
+                        ) : (
+                          "Upload license or ID for verification"
+                        )}
+                      </p>
+                    </div>
+                    <input
+                      type="file"
+                      className="hidden"
+                      onChange={(e) => setFile(e.target.files?.[0] || null)}
+                    />
+                  </label>
                 </div>
               </div>
+            )}
+
+            {/* Action Buttons */}
+            <div className="flex gap-3 pt-4 border-t mt-6">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => router.back()}
+                className="flex-1 h-11"
+                disabled={submitting}
+              >
+                Cancel
+              </Button>
+
+              <Button
+                type="submit"
+                className="flex-1 h-11 font-semibold"
+                disabled={submitting}
+              >
+                {submitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  "Save Changes"
+                )}
+              </Button>
             </div>
-          )}
-
-          {/* Action Buttons */}
-          <div className="flex gap-3 pt-2">
-            <button
-              type="button"
-              onClick={() => router.back()}
-              className="flex-1 px-4 py-2.5 bg-slate-100 text-slate-700 font-medium rounded-lg hover:bg-slate-200 transition-colors"
-            >
-              Cancel
-            </button>
-
-            <button
-              type="submit"
-              className="flex-1 px-4 py-2.5 bg-primary text-white font-medium rounded-lg hover:opacity-90 shadow-lg shadow-primary/20 transition-all active:scale-[0.98]"
-            >
-              Save Changes
-            </button>
-          </div>
-        </form>
+          </form>
+        )}
       </div>
     </div>
   );
