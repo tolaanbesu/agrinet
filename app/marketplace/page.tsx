@@ -95,7 +95,7 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
                                     </div>
                                 )}
                                 <div className="absolute top-3 right-3 bg-white/90 dark:bg-black/80 backdrop-blur-md px-3 py-1.5 rounded-full text-sm font-bold shadow-sm border border-white/20">
-                                    <span className="text-green-600 dark:text-green-400">${product.price}</span>
+                                    <span className="text-green-600 dark:text-green-400">{product.price}birr</span>
                                     <span className="text-muted-foreground font-normal text-xs ml-1">/{product.unit}</span>
                                 </div>
                             </Link>
@@ -141,3 +141,7 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
         </div>
     );
 }
+
+
+
+
