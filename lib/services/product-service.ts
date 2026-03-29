@@ -46,6 +46,7 @@ export const productService = {
                         image: true,
                         location: true,
                         phone: true,
+                        verificationStatus: true,
                     }
                 },
             },
@@ -54,8 +55,23 @@ export const productService = {
 
     async getFarmerProducts(farmerId: string) {
         return prisma.product.findMany({
-            where: { farmerId },
-            orderBy: { createdAt: "desc" },
+            where: {
+                farmerId,
+                status: "AVAILABLE", 
+            },
+            include: {
+                farmer: {
+                    select: {
+                        id: true,
+                        name: true,
+                        image: true,
+                        location: true,
+                    },
+                },
+            },
+            orderBy: {
+                createdAt: "desc",
+            },
         });
     },
 
