@@ -1,4 +1,4 @@
-import { auth } from "@/lib/auth"
+import { auth } from "@/lib/auth" 
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
 import prisma from "@/lib/prisma"
@@ -101,10 +101,10 @@ export default async function OrdersPage() {
 
                     </CardContent>
 
-                    {/*Pay Now button for pending orders */}
+                    {/* Only show Pay Now if order is pending */}
                     {order.paymentStatus === "PENDING" && (
                         <CardFooter>
-                            <Link href={`/checkout?orderId=${order.id}`}>
+                            <Link href={`/payment?orderId=${order.id}`}>
                                 <Button className="w-full" size="lg">
                                     Pay Now
                                 </Button>
