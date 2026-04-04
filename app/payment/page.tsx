@@ -21,9 +21,19 @@ export default async function PaymentPage({ searchParams }: { searchParams: { or
         redirect("/dashboard/buyer/orders")
     }
 
-    // Initialize Chapa payment
+    // Initializing Chapa payment
     const APP_URL = process.env.NEXT_PUBLIC_APP_URL
-    const tx_ref = `AGRINET-${Date.now()}`
+    let tx_ref = order.tx_ref
+
+    if (!tx_ref) {
+        tx_ref = `AGRINET-${Date.now()}`
+
+        await prisma.order.update({
+            where: { id: order.id },
+            data: { tx_ref, paymentStatus: "PENDING" }
+        })
+    }
+
     const chapaResponse = await axios.post(
         "https://api.chapa.co/v1/transaction/initialize",
         {
