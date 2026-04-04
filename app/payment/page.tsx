@@ -22,33 +22,29 @@ export default async function PaymentPage({ searchParams }: { searchParams: { or
     }
 
     // Initializing Chapa payment
-    const APP_URL = process.env.NEXT_PUBLIC_APP_URL
-    let tx_ref = order.tx_ref
+    const APP_URL = process.env.NEXT_PUBLIC_APP_URL;
+    const tx_ref = `AGRINET-${Date.now()}`
 
-    if (!tx_ref) {
-        tx_ref = `AGRINET-${Date.now()}`
-
-        await prisma.order.update({
-            where: { id: order.id },
-            data: { tx_ref, paymentStatus: "PENDING" }
-        })
-    }
+    await prisma.order.update({
+    where: { id: order.id },
+    data: { tx_ref, paymentStatus: "PENDING" }
+})
 
     const chapaResponse = await axios.post(
-        "https://api.chapa.co/v1/transaction/initialize",
-        {
-            amount: order.totalPrice.toString(),
-            currency: "ETB",
-            email: session.user.email,
-            first_name: session.user.name || "Customer",
-            tx_ref,
-            callback_url: `${APP_URL}/api/payment/verify`,
-            return_url: `${APP_URL}/api/payment/verify?tx_ref=${tx_ref}`,
-        },
-        {
-            headers: { Authorization: `Bearer ${process.env.CHAPA_SECRET_KEY}` },
-        }
-    )
+    "https://api.chapa.co/v1/transaction/initialize",
+    {
+        amount: order.totalPrice.toString(), 
+        currency: "ETB",
+        email: session.user.email, 
+        first_name: session.user.name || "Customer",
+        tx_ref,
+        callback_url: `${APP_URL}/api/payment/verify`,
+        return_url: `${APP_URL}/api/payment/verify?tx_ref=${tx_ref}`,
+    },
+    {
+        headers: { Authorization: `Bearer ${process.env.CHAPA_SECRET_KEY}` },
+    }
+)
 
     // Redirect to payment page
     if (chapaResponse.data?.data?.checkout_url) {
