@@ -42,8 +42,8 @@ export default async function PaymentPage({ searchParams }: { searchParams: { or
             email: session.user.email,
             first_name: session.user.name || "Customer",
             tx_ref,
-            callback_url: `${APP_URL}/api/payment/verify?orderId=${order.id}`,
-            return_url: `${APP_URL}/api/payment/verify?orderId=${order.id}&tx_ref=${tx_ref}`,
+            callback_url: `${APP_URL}/api/payment/verify`,
+            return_url: `${APP_URL}/api/payment/verify?tx_ref=${tx_ref}`,
         },
         {
             headers: { Authorization: `Bearer ${process.env.CHAPA_SECRET_KEY}` },
