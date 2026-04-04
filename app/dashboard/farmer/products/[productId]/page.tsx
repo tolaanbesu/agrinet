@@ -2,7 +2,6 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { productService } from "@/lib/services/product-service";
-import { ProductStatus } from "@prisma/client";
 import { updateProductAction } from "@/actions/product-actions";
 import {
     Card,
@@ -11,14 +10,13 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 interface Props {
     params: Promise<{ productId: string }>;
 }
 
 export default async function EditProductPage({ params }: Props) {
-
-
     const { productId } = await params;
 
     const session = await auth.api.getSession({
@@ -36,62 +34,81 @@ export default async function EditProductPage({ params }: Props) {
     }
 
     return (
-        <div className="max-w-2xl mx-auto py-8">
-            <Card>
-                <CardHeader>
-                    <CardTitle>Edit Product</CardTitle>
+        <div className="max-w-3xl mx-auto py-10 px-4">
+            <Card className="shadow-lg border border-muted">
+                <CardHeader className="space-y-1">
+                    <CardTitle className="text-2xl font-bold">
+                        Edit Product
+                    </CardTitle>
+                    <p className="text-sm text-muted-foreground">
+                        Update your product details below.
+                    </p>
                 </CardHeader>
+
                 <CardContent>
-
-                    
-                    <form action={updateProductAction} className="space-y-4">
-
+                    <form action={updateProductAction} className="space-y-6">
                         <input type="hidden" name="productId" value={product.id} />
 
+                        {/* Name */}
                         <div>
-                            <label className="block text-sm font-medium">Name</label>
+                            <label className="block text-sm font-medium mb-1">
+                                Product Name
+                            </label>
                             <input
                                 name="name"
                                 defaultValue={product.name}
-                                className="mt-1 block w-full border rounded px-2 py-1"
+                                className="w-full rounded-md border px-3 py-2 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary"
                             />
                         </div>
 
+                        {/* Category */}
                         <div>
-                            <label className="block text-sm font-medium">Category</label>
+                            <label className="block text-sm font-medium mb-1">
+                                Category
+                            </label>
                             <input
                                 name="category"
                                 defaultValue={product.category}
-                                className="mt-1 block w-full border rounded px-2 py-1"
+                                className="w-full rounded-md border px-3 py-2 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary"
                             />
                         </div>
 
-                        <div>
-                            <label className="block text-sm font-medium">Price (ETB)</label>
-                            <input
-                                name="price"
-                                type="number"
-                                defaultValue={product.price}
-                                className="mt-1 block w-full border rounded px-2 py-1"
-                            />
+                        {/* Grid for numbers */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-sm font-medium mb-1">
+                                    Price (ETB)
+                                </label>
+                                <input
+                                    name="price"
+                                    type="number"
+                                    defaultValue={product.price}
+                                    className="w-full rounded-md border px-3 py-2 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium mb-1">
+                                    Quantity
+                                </label>
+                                <input
+                                    name="quantity"
+                                    type="number"
+                                    defaultValue={product.quantity}
+                                    className="w-full rounded-md border px-3 py-2 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+                                />
+                            </div>
                         </div>
 
+                        {/* Status */}
                         <div>
-                            <label className="block text-sm font-medium">Quantity</label>
-                            <input
-                                name="quantity"
-                                type="number"
-                                defaultValue={product.quantity}
-                                className="mt-1 block w-full border rounded px-2 py-1"
-                            />
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-medium">Status</label>
+                            <label className="block text-sm font-medium mb-1">
+                                Status
+                            </label>
                             <select
                                 name="status"
                                 defaultValue={product.status}
-                                className="mt-1 block w-full border rounded px-2 py-1 text-white bg-gray-900"
+                                className="w-full rounded-md border px-3 py-2 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary"
                             >
                                 <option value="AVAILABLE">Available</option>
                                 <option value="OUT_OF_STOCK">Out of Stock</option>
@@ -99,14 +116,23 @@ export default async function EditProductPage({ params }: Props) {
                             </select>
                         </div>
 
-                        <Button type="submit">
-                            Update Product
-                        </Button>
+                        {/* Actions */}
+                        <div className="flex justify-end gap-3 pt-4">
+                            <Button variant="outline" asChild>
+                                <Link href="/dashboard/farmer/products">
+                                    Cancel
+                                </Link>
+                            </Button>
 
+                            <Button type="submit">
+                                Update Product
+                            </Button>
+                        </div>
                     </form>
-
                 </CardContent>
             </Card>
         </div>
     );
 }
+
+
