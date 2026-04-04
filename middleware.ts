@@ -27,6 +27,7 @@ export const config = {
     matcher: ["/dashboard/:path*", "/sign-in", "/sign-up"],
 };
 
+
 // import { NextResponse } from "next/server";
 // import type { NextRequest } from "next/server";
 

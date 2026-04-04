@@ -72,14 +72,14 @@ export default async function OrdersPage() {
                                 </span>
 
                                 {/* Order Status */}
-                                <span className={`text-xs px-2 py-1 rounded-full font-semibold
+                                {/* <span className={`text-xs px-2 py-1 rounded-full font-semibold
                                     ${order.status === "CONFIRMED" && "bg-blue-100 text-blue-700"}
                                     ${order.status === "PENDING" && "bg-gray-100 text-gray-700"}
                                     ${order.status === "SHIPPED" && "bg-purple-100 text-purple-700"}
                                     ${order.status === "DELIVERED" && "bg-green-100 text-green-700"}
                                 `}>
                                     {order.status}
-                                </span>
+                                </span> */}
 
                             </div>
                         </div>
@@ -127,7 +127,7 @@ export default async function OrdersPage() {
 
                     </CardContent>
 
-                    {/* Pay Now ONLY if still pending */}
+                    {/* Pay Now ONLY for pending orders */}
                     {order.paymentStatus === "PENDING" && (
                         <CardFooter>
                             <Link href={`/payment?orderId=${order.id}`}>
