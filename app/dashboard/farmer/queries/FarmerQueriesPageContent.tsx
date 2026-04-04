@@ -136,7 +136,7 @@ export default function FarmerQueriesPageContent({
         </Card>
       </section>
 
-      <section className="space-y-4">
+      {/* <section className="space-y-4">
         <h2 className="text-xl font-bold px-1 flex items-center gap-2">
             Recent Conversations
         </h2>
@@ -181,6 +181,101 @@ export default function FarmerQueriesPageContent({
                     </div>
                 ))
             )}
+        </div>
+      </section> */}
+      <section className="space-y-5">
+        <div className="flex items-center justify-between px-1">
+          <h2 className="text-xl font-bold flex items-center gap-2">
+            <MessageSquare className="w-5 h-5 text-primary" />
+            Recent Conversations
+          </h2>
+          <span className="text-xs text-muted-foreground">
+            Your latest messages
+          </span>
+        </div>
+
+        <div className="space-y-3">
+          {(() => {
+            // Show only the current user's queries
+            const userConversations = uniqueConversations.filter(
+              (q: any) => q.farmerId === q?.farmerId
+            );
+
+            if (userConversations.length === 0) {
+              return (
+                <div className="p-10 text-center border rounded-xl bg-muted/30 text-muted-foreground">
+                  <MessageSquare className="w-6 h-6 mx-auto mb-2 opacity-30" />
+                  No conversations yet.
+                </div>
+              );
+            }
+
+            return [...userConversations]
+              .sort(
+                (a: any, b: any) =>
+                  new Date(b.createdAt).getTime() -
+                  new Date(a.createdAt).getTime()
+              )
+              .map((q: any, index: number) => {
+                const isNewest = index === 0;
+
+                return (
+                  <div
+                    key={q.id}
+                    className={`group flex items-start gap-4 p-4 rounded-xl border transition-all hover:shadow-md ${
+                      isNewest
+                        ? "bg-primary/5 border-primary/30"
+                        : "bg-background"
+                    }`}
+                  >
+                    {/* Avatar */}
+                    <div className="w-11 h-11 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold border shrink-0">
+                      {q.expert?.name?.charAt(0) || "E"}
+                    </div>
+
+                    {/* Content */}
+                    <div className="flex-1 min-w-0 space-y-1">
+                      <div className="flex items-center justify-between">
+                        <h4 className="font-semibold truncate">
+                          {q.expert?.name || "Expert"}
+                        </h4>
+
+                        <div className="flex items-center gap-2">
+                          <Badge
+                            variant={
+                              q.status === "RESOLVED"
+                                ? "default"
+                                : "secondary"
+                            }
+                            className="text-[10px]"
+                          >
+                            {q.status}
+                          </Badge>
+
+                          <span className="text-[10px] text-muted-foreground hidden sm:block">
+                            {new Date(q.createdAt).toLocaleString()}
+                          </span>
+                        </div>
+                      </div>
+
+                      <p className="text-sm text-muted-foreground line-clamp-2">
+                        {q.expertResponse
+                          ? `Expert: ${q.expertResponse}`
+                          : `You: ${q.question}`}
+                      </p>
+                    </div>
+
+                    <div className="flex flex-col items-end gap-2">
+                      {q.expertResponse && !q.read && (
+                        <div className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse" />
+                      )}
+
+                      <ChevronRight className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition" />
+                    </div>
+                  </div>
+                );
+              });
+          })()}
         </div>
       </section>
 
