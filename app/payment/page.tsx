@@ -37,7 +37,7 @@ export default async function PaymentPage({ searchParams }: { searchParams: { or
     const chapaResponse = await axios.post(
         "https://api.chapa.co/v1/transaction/initialize",
         {
-            amount: order.totalPrice,
+            amount: order.totalPrice.toString(),
             currency: "ETB",
             email: session.user.email,
             first_name: session.user.name || "Customer",
