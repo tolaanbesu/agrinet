@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
-// ✅ From your side (UI cards)
+//   From your side (UI cards)
 import {
     Card,
     CardContent,
@@ -17,7 +17,7 @@ import {
     AlertTriangle
 } from "lucide-react";
 
-// ✅ From their side (admin system)
+//   From their side (admin system)
 import {
     getAdminStats,
     getUsers,
@@ -54,7 +54,7 @@ export default async function AdminDashboard({
         redirect("/dashboard");
     }
 
-    // ✅ Fetch real data (their system)
+    //   Fetch real data (their system)
     const [stats, users, reports, logs, products] = await Promise.all([
         getAdminStats(),
         getUsers(),
@@ -63,7 +63,7 @@ export default async function AdminDashboard({
         getProducts(),
     ]);
 
-    // ✅ Your fallback static stats (kept, not lost)
+    //   Your fallback static stats (kept, not lost)
     const fallbackStats = [
         { title: "Total Users", value: "0", icon: Users, description: "Registered platform users" },
         { title: "Total Products", value: "0", icon: Package, description: "Active listings" },
@@ -82,10 +82,10 @@ export default async function AdminDashboard({
                 </p>
             </div>
 
-            {/* ✅ Their dynamic stats */}
+            {/*   Their dynamic stats */}
             <StatsOverview stats={stats} />
 
-            {/* ✅ Your static cards (kept, not removed) */}
+            {/*   Your static cards (kept, not removed) */}
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 {fallbackStats.map((stat) => {
                     const Icon = stat.icon;
@@ -108,7 +108,7 @@ export default async function AdminDashboard({
                 })}
             </div>
 
-            {/* ✅ Their full admin system */}
+            {/*   Their full admin system */}
             <Tabs value={defaultTab} className="space-y-4">
 
                 <TabsContent value="overview" className="space-y-4">

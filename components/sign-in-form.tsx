@@ -14,7 +14,6 @@ import { authClient } from "@/lib/auth-client"
 import { signInFormSchema } from "@/lib/auth-schema"
 
 import { zodResolver } from "@hookform/resolvers/zod"
-import { redirect } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { z } from "zod"
@@ -41,7 +40,7 @@ export default function SignInForm() {
          onSuccess: () => {
             toast.dismiss();
             toast.success("Signed in successfully");
-            redirect("/dashboard")
+            window.location.href = "/dashboard";
          },
          onError: (ctx) => {
             toast.dismiss();

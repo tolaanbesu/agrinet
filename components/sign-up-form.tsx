@@ -14,7 +14,6 @@ import { authClient } from "@/lib/auth-client"
 import { formSchema } from "@/lib/auth-schema"
 
 import { zodResolver } from "@hookform/resolvers/zod"
-import { redirect } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { z } from "zod"
@@ -45,13 +44,13 @@ export default function SignUpForm() {
          password,
          name,
          role,
-      }, {
+      } as Parameters<typeof authClient.signUp.email>[0] & { role: string }, {
          onRequest: () => {
             toast("Signing up...")
          },
          onSuccess: () => {
             form.reset()
-            redirect("/sign-in")
+            window.location.href = "/sign-in";
          },
          onError: (ctx) => {
             toast.error(ctx.error.message);
