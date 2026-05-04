@@ -2,24 +2,21 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { productService } from "@/lib/services/product-service";
 import { notFound, redirect } from "next/navigation";
-import {
-    Card,
-    CardContent
-} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { 
     MessageSquare, 
     MapPin, 
     User, 
-    ArrowLeft, 
     ShieldCheck, 
-    Info, 
-    Store
+    Truck, 
+    PackageCheck,
+    ChevronRight,
+    Star
 } from "lucide-react";
 import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
 import { AddToCartButton } from "@/components/add-to-cart-button";
 import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
 
 export default async function ProductDetailsPage({
     params,
@@ -46,165 +43,181 @@ export default async function ProductDetailsPage({
     const status = product.farmer.verificationStatus;
 
     return (
-        <div className="container mx-auto py-8 px-4 max-w-6xl">
-            {/*Back Navigation */}
-            <nav className="mb-8">
-                <Link 
-                    href="/marketplace" 
-                    className="group inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
-                >
-                    <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform" />
-                    Back to Marketplace
-                </Link>
-            </nav>
+        <div className="bg-background min-h-screen pb-24">
+            <div className="container mx-auto px-4 max-w-7xl pt-6">
+                
+                {/* Standard E-commerce Breadcrumbs */}
+                <nav className="flex items-center text-sm text-muted-foreground mb-8 overflow-x-auto whitespace-nowrap pb-2">
+                    <Link href="/" className="hover:text-primary hover:underline transition-colors shrink-0">Home</Link>
+                    <ChevronRight className="h-4 w-4 mx-2 shrink-0 opacity-50" />
+                    <Link href="/marketplace" className="hover:text-primary hover:underline transition-colors shrink-0">Marketplace</Link>
+                    <ChevronRight className="h-4 w-4 mx-2 shrink-0 opacity-50" />
+                    <Link href={`/marketplace?category=${product.category.toLowerCase()}`} className="capitalize hover:text-primary hover:underline transition-colors shrink-0">{product.category}</Link>
+                    <ChevronRight className="h-4 w-4 mx-2 shrink-0 opacity-50" />
+                    <span className="text-foreground font-medium truncate">{product.name}</span>
+                </nav>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-                {/* LEFT COLUMN: Image Gallery (5 cols) */}
-                <div className="lg:col-span-5 space-y-6">
-                    <div className="aspect-square bg-slate-50 rounded-2xl overflow-hidden relative border border-slate-100 shadow-sm">
-                        {product.images?.[0] ? (
-                            <img
-                                src={product.images[0]}
-                                alt={product.name}
-                                className="object-cover w-full h-full hover:scale-105 transition-transform duration-500"
-                            />
-                        ) : (
-                            <div className="flex items-center justify-center h-full text-slate-200 font-bold uppercase text-8xl select-none">
-                                {product.name.charAt(0)}
+                <div className="flex flex-col lg:flex-row gap-12 lg:gap-16">
+                    
+                    {/* LEFT COLUMN: Standard Image Gallery */}
+                    <div className="w-full lg:w-1/2 space-y-4">
+                        <div className="aspect-square bg-slate-50/50 rounded-lg overflow-hidden relative border">
+                            {product.images?.[0] ? (
+                                <img
+                                    src={product.images[0]}
+                                    alt={product.name}
+                                    className="object-cover w-full h-full mix-blend-multiply"
+                                />
+                            ) : (
+                                <div className="flex items-center justify-center h-full text-muted-foreground/20 font-bold uppercase text-6xl bg-muted/20">
+                                    No Image
+                                </div>
+                            )}
+                            {product.status !== "AVAILABLE" && (
+                                <div className="absolute top-4 left-4">
+                                    <Badge variant="destructive" className="rounded-sm font-semibold">Out of Stock</Badge>
+                                </div>
+                            )}
+                        </div>
+
+                        {product.images?.length > 1 && (
+                            <div className="flex gap-4 overflow-x-auto pb-2 snap-x">
+                                {product.images.map((img: string, i: number) => (
+                                    <div key={i} className="flex-shrink-0 w-24 h-24 aspect-square bg-slate-50/50 rounded-md overflow-hidden border cursor-pointer hover:border-primary transition-colors snap-start">
+                                        <img src={img} alt={`${product.name} thumbnail ${i}`} className="object-cover w-full h-full mix-blend-multiply" />
+                                    </div>
+                                ))}
                             </div>
                         )}
-                        
-                        {/* Price Tag Overlay */}
-                        <div className="absolute bottom-4 left-4">
-                            <Badge className="text-xl py-2 px-5 glass text-foreground border-none shadow-2xl">
-                                <span className="font-black text-primary">{product.price} birr</span>
-                                <span className="text-muted-foreground text-sm font-medium ml-1">/ {product.unit}</span>
-                            </Badge>
-                        </div>
                     </div>
 
-                    {product.images?.length > 1 && (
-                        <div className="grid grid-cols-4 gap-3">
-                            {product.images.map((img: string, i: number) => (
-                                <div key={i} className="aspect-square bg-slate-50 rounded-xl overflow-hidden border border-slate-100 cursor-pointer hover:ring-2 hover:ring-primary/50 transition-all">
-                                    <img src={img} alt={`${product.name} ${i}`} className="object-cover w-full h-full" />
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
-
-                {/* RIGHT COLUMN: Product Info (7 cols) */}
-                <div className="lg:col-span-7 flex flex-col">
-                    <div className="flex-1 space-y-6">
-                        {/* Title & Status */}
-                        <div className="space-y-3">
-                            <div className="flex flex-wrap items-center gap-2">
-                                <Badge variant="secondary" className="bg-muted text-muted-foreground capitalize px-3">
-                                    {product.category}
-                                </Badge>
-                                {product.status === "AVAILABLE" ? (
-                                    <Badge className="bg-primary/10 text-primary border-primary/20 px-3">
-                                        <div className="h-1.5 w-1.5 rounded-full bg-primary mr-2 animate-pulse" />
-                                        In Stock
-                                    </Badge>
-                                ) : (
-                                    <Badge variant="destructive" className="bg-destructive/10 text-destructive border-destructive/20 px-3">Out of Stock</Badge>
-                                )}
-                            </div>
-                            <h1 className="text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900">
+                    {/* RIGHT COLUMN: Product Details */}
+                    <div className="w-full lg:w-1/2 flex flex-col">
+                        
+                        {/* Title & Brand/Farmer */}
+                        <div className="mb-6">
+                            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4 leading-tight">
                                 {product.name}
                             </h1>
-                            <div className="flex items-center gap-1 text-muted-foreground font-medium">
-                                <MapPin className="h-4 w-4 text-rose-500" />
-                                <span>{product.location}</span>
+                            
+                            <div className="flex items-center gap-4 text-sm">
+                                <Link 
+                                    href={`/dashboard/farmer/${product.farmerId}`} 
+                                    className="font-medium text-primary hover:underline flex items-center gap-1.5"
+                                >
+                                    {status === "VERIFIED" && <ShieldCheck className="h-4 w-4" />}
+                                    {product.farmer.name}
+                                </Link>
+                                <div className="flex items-center gap-1 text-yellow-500">
+                                    {[...Array(5)].map((_, i) => (
+                                        <Star key={i} className="h-4 w-4 fill-current" />
+                                    ))}
+                                    <span className="text-muted-foreground ml-1">(0 reviews)</span>
+                                </div>
                             </div>
                         </div>
 
-                        <Separator className="opacity-50" />
-
-                        {/* Description Section */}
-                        <div className="space-y-3">
-                            <div className="flex items-center gap-2 text-slate-900 font-bold">
-                                <Info className="h-4 w-4" />
-                                <h2>Product Description</h2>
+                        {/* Price Block */}
+                        <div className="mb-6">
+                            <div className="flex items-end gap-2 mb-1">
+                                <span className="text-4xl font-bold tracking-tight text-foreground">{product.price} birr</span>
+                                <span className="text-lg text-muted-foreground mb-1">/ {product.unit}</span>
                             </div>
-                            <p className="text-slate-600 leading-relaxed text-lg italic">
-                                "{product.description}"
+                            <p className="text-sm text-green-600 font-medium flex items-center gap-1.5 mt-2">
+                                <PackageCheck className="h-4 w-4" />
+                                {product.status === "AVAILABLE" ? "In Stock and ready to ship" : "Currently Unavailable"}
                             </p>
                         </div>
 
-                        {/* Purchase Card */}
-                        <div className="bg-muted/30 rounded-[2rem] p-8 border border-border/50 shadow-sm space-y-6">
-                            <div className="flex items-center justify-between">
-                                <div className="space-y-1">
-                                    <p className="text-sm text-muted-foreground font-bold uppercase tracking-widest">Stock Availability</p>
-                                    <p className="font-black text-3xl text-foreground">
-                                        {product.quantity} <span className="text-muted-foreground font-normal text-lg">{product.unit} left</span>
-                                    </p>
-                                </div>
+                        {/* Core Details */}
+                        <div className="space-y-4 mb-8">
+                            <div className="flex items-center gap-3 text-sm text-foreground">
+                                <MapPin className="h-5 w-5 text-muted-foreground shrink-0" />
+                                <span><span className="font-semibold text-muted-foreground">Location:</span> {product.location}</span>
                             </div>
-
-                            <div className="flex flex-col gap-3">
-                                {isFarmer ? (
-                                    <Button className="w-full h-12 text-md font-semibold" variant="outline" asChild>
-                                        <Link href={`/dashboard/farmer/products/edit/${product.id}`}>Edit Listing</Link>
-                                    </Button>
-                                ) : (
-                                    <>
-                                        <AddToCartButton
-                                            productId={product.id}
-                                            disabled={product.status !== "AVAILABLE"}
-                                        />
-                                        <Button className="w-full gap-2 h-12 bg-white hover:bg-gray-200 text-gray-900 hover:text-gray-900 border-slate-200 shadow-sm" variant="outline" asChild>
-                                            <Link href={`/dashboard/chat?farmerId=${product.farmerId}`}>
-                                                <MessageSquare className="h-5 w-5" />
-                                                Contact Farmer
-                                            </Link>
-                                        </Button>
-                                    </>
-                                )}
+                            <div className="flex items-center gap-3 text-sm text-foreground">
+                                <Truck className="h-5 w-5 text-muted-foreground shrink-0" />
+                                <span><span className="font-semibold text-muted-foreground">Delivery options:</span> Contact farmer for delivery availability.</span>
+                            </div>
+                            <div className="flex items-center gap-3 text-sm text-foreground">
+                                <ShieldCheck className="h-5 w-5 text-muted-foreground shrink-0" />
+                                <span><span className="font-semibold text-muted-foreground">Buyer protection:</span> Secure payments and verified farmers.</span>
                             </div>
                         </div>
-                    </div>
 
-                    {/* Farmer Profile Footer */}
-                    <Card className="mt-8 border-none bg-primary text-primary-foreground overflow-hidden shadow-xl shadow-primary/20">
-                        <CardContent className="p-6">
-                            <div className="flex items-center justify-between gap-4">
-                                <div className="flex items-center gap-4">
-                                    <div className="h-16 w-16 rounded-full border-2 border-primary-foreground/30 p-1 relative shadow-inner">
-                                        {product.farmer.image ? (
-                                            <img src={product.farmer.image} alt={product.farmer.name || ""} className="h-full w-full rounded-full object-cover" />
-                                        ) : (
-                                            <div className="h-full w-full rounded-full bg-primary-foreground/10 flex items-center justify-center text-primary-foreground">
-                                                <User className="h-8 w-8" />
-                                            </div>
-                                        )}
-                                        <div className="absolute -bottom-1 -right-1 bg-background rounded-full p-1 shadow-md">
-                                            <ShieldCheck className="h-4 w-4 text-primary fill-primary/10" />
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <p className="text-xs font-medium text-primary-foreground/70 uppercase tracking-tighter">Verified Producer</p>
-                                        <p className="font-bold text-xl leading-tight">
-                                            {product.farmer.name}
-                                        </p>
-                                        {status === "VERIFIED" && <div className="flex items-center gap-1.5 mt-1">
-                                            <div className="h-2 w-2 rounded-full bg-accent animate-pulse" />
-                                            <p className="text-accent text-[10px] font-black uppercase tracking-widest">Verified Seller</p>
-                                        </div>}
-                                    </div>
+                        <Separator className="mb-8" />
+
+                        {/* Actions */}
+                        <div className="space-y-4 mb-8">
+                            <div className="flex items-center justify-between text-sm mb-4">
+                                <span className="font-medium">Quantity Available</span>
+                                <span className="font-bold">{product.quantity} {product.unit}</span>
+                            </div>
+
+                            {isFarmer ? (
+                                <Button size="lg" className="w-full text-base font-semibold h-12" asChild>
+                                    <Link href={`/dashboard/farmer/products/edit/${product.id}`}>Edit Listing</Link>
+                                </Button>
+                            ) : (
+                                <div className="space-y-3">
+                                    <AddToCartButton
+                                        productId={product.id}
+                                        disabled={product.status !== "AVAILABLE"}
+                                        className="h-12 w-full text-base font-semibold"
+                                    />
+                                    <Button size="lg" className="w-full h-12 font-semibold bg-secondary/50 text-foreground hover:bg-secondary border shadow-none" variant="outline" asChild>
+                                        <Link href={`/dashboard/chat?farmerId=${product.farmerId}`} className="flex justify-center items-center gap-2">
+                                            <MessageSquare className="h-4 w-4" />
+                                            Message Seller
+                                        </Link>
+                                    </Button>
                                 </div>
-                                <Button variant="secondary" size="lg" asChild className="rounded-xl font-bold px-6">
-                                    <Link href={`/dashboard/farmer/${product.farmerId}`} className="flex items-center gap-2">
-                                        <Store className="h-5 w-5" />
-                                        Visit Store
+                            )}
+                        </div>
+
+                        <Separator className="mb-8" />
+
+                        {/* Description Accordion/Section */}
+                        <div>
+                            <h3 className="font-bold text-lg mb-4 text-foreground">Product Description</h3>
+                            <div className="prose prose-sm max-w-none text-muted-foreground">
+                                <p className="leading-relaxed whitespace-pre-line">
+                                    {product.description}
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* Seller profile snippet */}
+                        <div className="mt-12 p-6 rounded-lg border bg-muted/20">
+                            <h4 className="font-bold text-base mb-4">About the Seller</h4>
+                            <div className="flex items-center gap-4">
+                                <div className="h-16 w-16 rounded-full border bg-background flex items-center justify-center overflow-hidden shrink-0">
+                                    {product.farmer.image ? (
+                                        <img src={product.farmer.image} alt={product.farmer.name || ""} className="object-cover w-full h-full" />
+                                    ) : (
+                                        <User className="h-6 w-6 text-muted-foreground" />
+                                    )}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <p className="font-semibold text-foreground truncate">{product.farmer.name}</p>
+                                    {status === "VERIFIED" ? (
+                                        <p className="text-primary text-sm flex items-center gap-1.5 mt-1">
+                                            <ShieldCheck className="h-3.5 w-3.5" />
+                                            Verified Seller
+                                        </p>
+                                    ) : (
+                                        <p className="text-muted-foreground text-sm mt-1">New Seller</p>
+                                    )}
+                                </div>
+                                <Button variant="outline" size="sm" asChild className="shrink-0 bg-background">
+                                    <Link href={`/dashboard/farmer/${product.farmerId}`}>
+                                        View Store
                                     </Link>
                                 </Button>
                             </div>
-                        </CardContent>
-                    </Card>
+                        </div>
+
+                    </div>
                 </div>
             </div>
         </div>

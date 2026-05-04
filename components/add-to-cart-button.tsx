@@ -7,7 +7,7 @@ import { addToCartAction } from "@/actions/cart-actions"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 
-export function AddToCartButton({ productId, disabled }: { productId: string, disabled?: boolean }) {
+export function AddToCartButton({ productId, disabled, className }: { productId: string, disabled?: boolean, className?: string }) {
     const [isPending, setIsPending] = useState(false)
     const router = useRouter()
 
@@ -33,7 +33,7 @@ export function AddToCartButton({ productId, disabled }: { productId: string, di
 
     return (
         <Button
-            className="w-full gap-2 h-12 text-lg"
+            className={className || "w-full gap-2 h-12 text-lg"}
             disabled={disabled || isPending}
             onClick={handleAddToCart}
         >

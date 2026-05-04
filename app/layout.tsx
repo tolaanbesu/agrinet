@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Noto_Sans_KR } from 'next/font/google';
+import { Inter } from 'next/font/google';
 import "./globals.css";
 import NextTopLoader from "nextjs-toploader";
 import { Toaster } from "@/components/ui/sonner";
@@ -8,10 +8,9 @@ import { headers } from "next/headers";
 import { UserProvider } from "@/context/UserContext";
 import { ThemeProvider } from "@/components/theme-provider";
 
-const notoSansKR = Noto_Sans_KR({
-  weight: ['300', '400', '500', '700'],
+const inter = Inter({
   subsets: ['latin'],
-  variable: '--font-noto-sans-kr',
+  variable: '--font-inter',
   display: 'swap',
 });
 
@@ -33,7 +32,7 @@ export default async function RootLayout({
   });
 
   return (
-    <html lang="en" className={`${notoSansKR.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${inter.variable}`} suppressHydrationWarning>
       <body className="antialiased">
         <ThemeProvider
           attribute="class"
