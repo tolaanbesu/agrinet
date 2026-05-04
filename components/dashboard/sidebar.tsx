@@ -18,6 +18,7 @@ import {
 import { usePathname, useSearchParams } from "next/navigation"
 import Logo from "@/components/logo"
 import SignOutForm from "@/components/sign-out-form"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 interface SidebarProps {
     user: any;
@@ -94,16 +95,21 @@ export default function Sidebar({ user, hasCart }: SidebarProps) {
             </nav>
 
             <div className="p-4 border-t space-y-4">
-                <div className="flex items-center gap-3 px-3">
-                    <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center font-bold text-primary text-xs">
-                        {user.name?.charAt(0) || "U"}
-                    </div>
-                    <div className="overflow-hidden">
-                        <p className="text-sm font-medium truncate">{user.name}</p>
-                        <p className="text-xs text-muted-foreground truncate capitalize">{role.toLowerCase()}</p>
+                <div className="flex items-center justify-between px-3">
+                    <div className="flex items-center gap-3">
+                        <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center font-bold text-primary text-xs shrink-0">
+                            {user.name?.charAt(0) || "U"}
+                        </div>
+                        <div className="overflow-hidden">
+                            <p className="text-sm font-medium truncate">{user.name}</p>
+                            <p className="text-xs text-muted-foreground truncate capitalize">{role.toLowerCase()}</p>
+                        </div>
                     </div>
                 </div>
-                <SignOutForm />
+                <div className="flex items-center justify-between pt-2">
+                    <ThemeToggle />
+                    <SignOutForm />
+                </div>
             </div>
         </aside>
     )

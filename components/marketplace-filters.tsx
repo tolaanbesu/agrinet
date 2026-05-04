@@ -56,32 +56,34 @@ export function MarketplaceFilters({
     }
 
     return (
-        <div className="flex items-center gap-2 w-full md:w-auto">
-            <div className="relative w-full max-w-sm">
+        <div className="flex flex-col md:flex-row items-stretch md:items-center gap-3 w-full md:w-auto">
+            <div className="relative flex-1 md:w-80">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                    placeholder="Search products..."
-                    className="pl-9"
+                    placeholder="Search fresh products..."
+                    className="pl-9 h-11 md:h-10 bg-background/50 focus:bg-background transition-all"
                     defaultValue={initialSearch}
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
             </div>
-            <Select
-                defaultValue={initialCategory}
-                onValueChange={handleCategoryChange}
-            >
-                <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Category" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectItem value="all">All Categories</SelectItem>
-                    <SelectItem value="vegetables">Vegetables</SelectItem>
-                    <SelectItem value="fruits">Fruits</SelectItem>
-                    <SelectItem value="grains">Grains</SelectItem>
-                    <SelectItem value="poultry">Poultry</SelectItem>
-                </SelectContent>
-            </Select>
-            {isPending && <div className="text-xs text-muted-foreground animate-pulse ml-2 whitespace-nowrap">Updating...</div>}
+            <div className="flex items-center gap-2">
+                <Select
+                    defaultValue={initialCategory}
+                    onValueChange={handleCategoryChange}
+                >
+                    <SelectTrigger className="flex-1 md:w-[180px] h-11 md:h-10 bg-background/50">
+                        <SelectValue placeholder="Category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">All Categories</SelectItem>
+                        <SelectItem value="vegetables">Vegetables</SelectItem>
+                        <SelectItem value="fruits">Fruits</SelectItem>
+                        <SelectItem value="grains">Grains</SelectItem>
+                        <SelectItem value="poultry">Poultry</SelectItem>
+                    </SelectContent>
+                </Select>
+                {isPending && <div className="text-[10px] uppercase tracking-widest text-primary animate-pulse font-bold ml-2">Updating...</div>}
+            </div>
         </div>
     )
 }

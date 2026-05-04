@@ -76,9 +76,9 @@ export default async function ProductDetailsPage({
                         
                         {/* Price Tag Overlay */}
                         <div className="absolute bottom-4 left-4">
-                            <Badge className="text-xl py-2 px-4 bg-white/90 backdrop-blur-md text-slate-900 border-none shadow-xl hover:bg-white">
-                                <span className="font-black text-emerald-600">{product.price}birr</span>
-                                <span className="text-slate-500 text-sm font-medium ml-1">/ {product.unit}</span>
+                            <Badge className="text-xl py-2 px-5 glass text-foreground border-none shadow-2xl">
+                                <span className="font-black text-primary">{product.price} birr</span>
+                                <span className="text-muted-foreground text-sm font-medium ml-1">/ {product.unit}</span>
                             </Badge>
                         </div>
                     </div>
@@ -100,16 +100,16 @@ export default async function ProductDetailsPage({
                         {/* Title & Status */}
                         <div className="space-y-3">
                             <div className="flex flex-wrap items-center gap-2">
-                                <Badge variant="secondary" className="bg-slate-100 text-slate-700 capitalize">
+                                <Badge variant="secondary" className="bg-muted text-muted-foreground capitalize px-3">
                                     {product.category}
                                 </Badge>
                                 {product.status === "AVAILABLE" ? (
-                                    <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200">
-                                        <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 mr-2 animate-pulse" />
+                                    <Badge className="bg-primary/10 text-primary border-primary/20 px-3">
+                                        <div className="h-1.5 w-1.5 rounded-full bg-primary mr-2 animate-pulse" />
                                         In Stock
                                     </Badge>
                                 ) : (
-                                    <Badge variant="destructive" className="bg-rose-50 text-rose-700 border-rose-200">Out of Stock</Badge>
+                                    <Badge variant="destructive" className="bg-destructive/10 text-destructive border-destructive/20 px-3">Out of Stock</Badge>
                                 )}
                             </div>
                             <h1 className="text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900">
@@ -135,12 +135,12 @@ export default async function ProductDetailsPage({
                         </div>
 
                         {/* Purchase Card */}
-                        <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200/60 shadow-inner space-y-6">
+                        <div className="bg-muted/30 rounded-[2rem] p-8 border border-border/50 shadow-sm space-y-6">
                             <div className="flex items-center justify-between">
-                                <div className="space-y-0.5">
-                                    <p className="text-sm text-slate-500 font-medium">Stock Availability</p>
-                                    <p className="font-bold text-xl text-slate-900">
-                                        {product.quantity} <span className="text-slate-500 font-normal">{product.unit} left</span>
+                                <div className="space-y-1">
+                                    <p className="text-sm text-muted-foreground font-bold uppercase tracking-widest">Stock Availability</p>
+                                    <p className="font-black text-3xl text-foreground">
+                                        {product.quantity} <span className="text-muted-foreground font-normal text-lg">{product.unit} left</span>
                                     </p>
                                 </div>
                             </div>
@@ -169,36 +169,37 @@ export default async function ProductDetailsPage({
                     </div>
 
                     {/* Farmer Profile Footer */}
-                    <Card className="mt-8 border-none bg-slate-900 text-white overflow-hidden">
-                        <CardContent className="p-5">
-                            <div className="flex items-center justify-between">
+                    <Card className="mt-8 border-none bg-primary text-primary-foreground overflow-hidden shadow-xl shadow-primary/20">
+                        <CardContent className="p-6">
+                            <div className="flex items-center justify-between gap-4">
                                 <div className="flex items-center gap-4">
-                                    <div className="h-14 w-14 rounded-full border-2 border-white/20 p-0.5 relative">
+                                    <div className="h-16 w-16 rounded-full border-2 border-primary-foreground/30 p-1 relative shadow-inner">
                                         {product.farmer.image ? (
                                             <img src={product.farmer.image} alt={product.farmer.name || ""} className="h-full w-full rounded-full object-cover" />
                                         ) : (
-                                            <div className="h-full w-full rounded-full bg-white/10 flex items-center justify-center">
-                                                <User className="h-7 w-7 text-white" />
+                                            <div className="h-full w-full rounded-full bg-primary-foreground/10 flex items-center justify-center text-primary-foreground">
+                                                <User className="h-8 w-8" />
                                             </div>
                                         )}
-                                        <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5">
-                                            <ShieldCheck className="h-4 w-4 text-emerald-500 fill-emerald-500/20" />
+                                        <div className="absolute -bottom-1 -right-1 bg-background rounded-full p-1 shadow-md">
+                                            <ShieldCheck className="h-4 w-4 text-primary fill-primary/10" />
                                         </div>
                                     </div>
                                     <div>
-                                        <p className="text-sm font-medium text-slate-400">Listed by</p>
-                                        <p className="font-bold text-lg leading-tight flex items-center gap-1">
+                                        <p className="text-xs font-medium text-primary-foreground/70 uppercase tracking-tighter">Verified Producer</p>
+                                        <p className="font-bold text-xl leading-tight">
                                             {product.farmer.name}
                                         </p>
-                                        {status === "VERIFIED" && <p className="text-emerald-400 text-xs font-bold">Verified Seller</p>}
-                                        {status === "PENDING" && <p className="text-yellow-500 text-xs font-bold">Pending</p>}
-                                        {status === "REJECTED" && <p className="text-rose-500 text-xs font-bold">Not Verified</p>}
+                                        {status === "VERIFIED" && <div className="flex items-center gap-1.5 mt-1">
+                                            <div className="h-2 w-2 rounded-full bg-accent animate-pulse" />
+                                            <p className="text-accent text-[10px] font-black uppercase tracking-widest">Verified Seller</p>
+                                        </div>}
                                     </div>
                                 </div>
-                                <Button variant="ghost" size="sm" asChild className="text-white hover:bg-white/10 hover:text-white rounded-full border border-white/20">
+                                <Button variant="secondary" size="lg" asChild className="rounded-xl font-bold px-6">
                                     <Link href={`/dashboard/farmer/${product.farmerId}`} className="flex items-center gap-2">
-                                        <Store className="h-4 w-4" />
-                                        Store
+                                        <Store className="h-5 w-5" />
+                                        Visit Store
                                     </Link>
                                 </Button>
                             </div>

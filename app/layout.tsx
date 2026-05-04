@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { UserProvider } from "@/context/UserContext";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const notoSansKR = Noto_Sans_KR({
   weight: ['300', '400', '500', '700'],
@@ -34,13 +35,20 @@ export default async function RootLayout({
   return (
     <html lang="en" className={`${notoSansKR.variable}`} suppressHydrationWarning>
       <body className="antialiased">
-        <UserProvider user={session?.user as any}>
-          <NextTopLoader showSpinner={false} height={6} color="#000000" />
-          <Toaster richColors position="top-right" />
-          <main className="min-h-screen">
-            {children}
-          </main>
-        </UserProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <UserProvider user={session?.user as any}>
+            <NextTopLoader showSpinner={false} height={6} color="var(--primary)" />
+            <Toaster richColors position="top-right" />
+            <main className="min-h-screen">
+              {children}
+            </main>
+          </UserProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
