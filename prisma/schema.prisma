@@ -8,33 +8,35 @@ datasource db {
 }
 
 model User {
-  id                 String             @id @default(uuid())
-  email              String             @unique
-  name               String?
-  emailVerified      Boolean
-  image              String?
-  role               Role               @default(BUYER)
-  phone              String?
-  location           String?
-  profileImage       String?
-  verificationStatus VerificationStatus @default(PENDING)
+  id                   String             @id @default(uuid())
+  email                String             @unique
+  name                 String?
+  emailVerified        Boolean
+  image                String?
+  role                 Role               @default(BUYER)
+  phone                String?
+  location             String?
+  profileImage         String?
+  verificationStatus   VerificationStatus @default(PENDING)
   verificationDocument String?
-  createdAt          DateTime           @default(now())
-  updatedAt          DateTime           @updatedAt
-  accounts           Account[]
-  articles           Article[]
-  auditLogs          AuditLog[]
-  cart               Cart?
-  receivedMessages   Chat[]             @relation("ReceivedMessages")
-  sentMessages       Chat[]             @relation("SentMessages")
-  farmerQueries      FarmerQuery[]
-  marketAlerts       MarketAlert[]
-  orders             Order[]            @relation("BuyerOrders")
-  farmerOrders       Order[]            @relation("FarmerOrders")
-  products           Product[]
-  reportsReceived    Report[]           @relation("ReportsReceived")
-  reportsSent        Report[]           @relation("ReportsSent")
-  sessions           Session[]
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+  accounts             Account[]
+  articles             Article[]
+  auditLogs            AuditLog[]
+  cart                 Cart?
+  receivedMessages     Chat[]             @relation("ReceivedMessages")
+  sentMessages         Chat[]             @relation("SentMessages")
+  farmerQueries        FarmerQuery[]      @relation("FarmerQueries")
+  marketAlerts         MarketAlert[]
+  orders               Order[]            @relation("BuyerOrders")
+  farmerOrders         Order[]            @relation("FarmerOrders")
+  products             Product[]
+  reportsReceived      Report[]           @relation("ReportsReceived")
+  reportsSent          Report[]           @relation("ReportsSent")
+  sessions             Session[]
+
+  assignedQueries FarmerQuery[] @relation("ExpertQueries")
 
   @@map("user")
 }
@@ -194,17 +196,22 @@ model Article {
 }
 
 model FarmerQuery {
-  id             String      @id @default(uuid())
-  farmerId       String
+  id       String  @id @default(uuid())
+  farmerId String
+  expertId String?
+
   question       String
   expertResponse String?
   status         QueryStatus @default(OPEN)
-  createdAt      DateTime    @default(now())
-  updatedAt      DateTime    @updatedAt
-  expertId       String
-  farmer         User        @relation(fields: [farmerId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  farmer User  @relation("FarmerQueries", fields: [farmerId], references: [id])
+  expert User? @relation("ExpertQueries", fields: [expertId], references: [id])
 
   @@index([farmerId])
+  @@index([expertId])
   @@map("farmer_query")
 }
 

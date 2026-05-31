@@ -42,7 +42,7 @@ export default async function ExpertDashboard() {
         where: { expertId }
     }),
     prisma.farmerQuery.count({
-        where: { status: "OPEN" }
+        where: { status: "OPEN", expertId: expertId }
     }),
     prisma.marketAlert.count({
         where: { postedById: expertId }
@@ -55,10 +55,13 @@ export default async function ExpertDashboard() {
     }).then(res => res.length),
 
     prisma.farmerQuery.findMany({
-        where: { status: "OPEN" },
-        include: { farmer: true },
-        orderBy: { createdAt: "desc" },
-        take: 5
+    where: {
+        status: "OPEN",
+        expertId: expertId
+    },
+    include: { farmer: true },
+    orderBy: { createdAt: "desc" },
+    take: 5
     })
 ]);
 
