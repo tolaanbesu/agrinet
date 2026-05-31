@@ -13,8 +13,23 @@ export default async function QueriesPage() {
 
   if (!session) redirect("/sign-in");
   if (session.user.role !== "EXPERT") redirect("/dashboard");
-
+   
   const queries = await prisma.farmerQuery.findMany({
+  where: {
+    expertId: session.user.id,
+  },
+  include: { farmer: true },
+  orderBy: { createdAt: "desc" },
+  });
+
+  const uniqueFarmers: Record<string, any> = {};
+
+  queries.forEach((q) => {
+    if (q.farmer) {
+      uniqueFarmers[q.farmer.id] = q.farmer;
+    }
+  });
+  /**const queries = await prisma.farmerQuery.findMany({
     where: { expertResponse: null },
     include: { farmer: true },
     orderBy: { createdAt: "desc" },
@@ -23,7 +38,7 @@ export default async function QueriesPage() {
   const uniqueFarmers: Record<string, any> = {};
   queries.forEach((q) => {
     if (q.farmer) uniqueFarmers[q.farmer.id] = q.farmer;
-  });
+  });  **/
 
   return (
     <div className="space-y-6">
