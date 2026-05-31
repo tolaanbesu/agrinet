@@ -27,16 +27,43 @@ import {
 import { toast } from "sonner"
 import { createProductAction } from "@/actions/product-actions"
 
+// const productFormSchema = z.object({
+//     name: z.string().min(2, "Name must be at least 2 characters"),
+//     category: z.string().min(1, "Please select a category"),
+//     description: z.string().min(10, "Description must be at least 10 characters"),
+//     price: z.string().refine((val) => !isNaN(Number(val)) && Number(val) > 0, "Price must be a positive number"),
+//     quantity: z.string().refine((val) => !isNaN(Number(val)) && Number(val) > 0, "Quantity must be a positive number"),
+//     unit: z.string().min(1, "Please enter a unit (e.g., kg, box)"),
+//     location: z.string().min(2, "Location is required"),
+//     images: z.string().optional(), // In a real app, this would be a file upload or multiple URLs
+// })
+
 const productFormSchema = z.object({
     name: z.string().min(2, "Name must be at least 2 characters"),
     category: z.string().min(1, "Please select a category"),
     description: z.string().min(10, "Description must be at least 10 characters"),
-    price: z.string().refine((val) => !isNaN(Number(val)) && Number(val) > 0, "Price must be a positive number"),
-    quantity: z.string().refine((val) => !isNaN(Number(val)) && Number(val) > 0, "Quantity must be a positive number"),
-    unit: z.string().min(1, "Please enter a unit (e.g., kg, box)"),
+
+    price: z
+        .string()
+        .refine((val) => /^[0-9]+(\.[0-9]{1,2})?$/.test(val), "Price must be a positive number (e.g. 10 or 10.50)")
+        .refine((val) => Number(val) > 0, "Price must be greater than 0"),
+
+    quantity: z
+        .string()
+        .refine((val) => /^[0-9]+$/.test(val), "Quantity must be a whole positive number")
+        .refine((val) => Number(val) > 0, "Quantity must be greater than 0"),
+
+    unit: z
+        .string()
+        .min(1, "Please enter a unit (e.g., kg, box)")
+        .refine(
+            (val) => /^[a-zA-Z]+$/.test(val),
+            "Unit must contain only letters (e.g., kg, box, ton)"
+        ),
+
     location: z.string().min(2, "Location is required"),
-    images: z.string().optional(), // In a real app, this would be a file upload or multiple URLs
-})
+    images: z.string().optional(),
+    });
 
 export function ProductForm() {
     const router = useRouter()
