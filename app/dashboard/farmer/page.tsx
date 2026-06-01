@@ -11,6 +11,7 @@ import {
     CardHeader,
     CardTitle
 } from "@/components/ui/card";
+
 import {
     Package,
     ShoppingCart,
@@ -99,15 +100,6 @@ export default async function FarmerDashboard() {
                     )}
                 </div>
             </Link>
-
-            {/* <div className="flex justify-between items-end">
-                <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Farmer Dashboard</h1>
-                    <p className="text-muted-foreground mt-1">
-                        Welcome back, {session.user.name}. Here's your farm's performance.
-                    </p>
-                </div>
-            </div> */}
             <div className="flex justify-between items-end">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight">Farmer Dashboard</h1>
@@ -125,15 +117,7 @@ export default async function FarmerDashboard() {
                         <Users className="w-4 h-4" />
                         My Profile
                     </Link>
-                    {/* {!session.user.phone || !session.user.location ? (
-                    <Link
-                        href="/dashboard/profile/edit"
-                        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:opacity-90 transition"
-                    >
-                        Complete Profile
-                        <ArrowRight className="w-4 h-4" />
-                    </Link>
-                   ) : null} */}
+                    
                 </div>
             </div>
 

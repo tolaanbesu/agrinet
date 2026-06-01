@@ -2,7 +2,6 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
-//   From your side (UI cards)
 import {
     Card,
     CardContent,
@@ -17,7 +16,6 @@ import {
     AlertTriangle
 } from "lucide-react";
 
-//   From their side (admin system)
 import {
     getAdminStats,
     getUsers,
@@ -54,7 +52,6 @@ export default async function AdminDashboard({
         redirect("/dashboard");
     }
 
-    //   Fetch real data (their system)
     const [stats, users, reports, logs, products] = await Promise.all([
         getAdminStats(),
         getUsers(),
@@ -63,7 +60,6 @@ export default async function AdminDashboard({
         getProducts(),
     ]);
 
-    //   Your fallback static stats (kept, not lost)
     const fallbackStats = [
         { title: "Total Users", value: "0", icon: Users, description: "Registered platform users" },
         { title: "Total Products", value: "0", icon: Package, description: "Active listings" },
@@ -73,16 +69,12 @@ export default async function AdminDashboard({
 
     return (
         <div className="flex-1 space-y-8 p-8 pt-6">
-
-            {/* HEADER */}
             <div>
                 <h1 className="text-3xl font-bold tracking-tight">Admin Control Panel</h1>
                 <p className="text-muted-foreground mt-1">
                     Overview of the AGRINET system and user management.
                 </p>
             </div>
-
-            {/*   Their dynamic stats */}
             <StatsOverview stats={stats} />
 
             {/*   Your static cards (kept, not removed) */}
@@ -108,7 +100,6 @@ export default async function AdminDashboard({
                 })}
             </div>
 
-            {/*   Their full admin system */}
             <Tabs value={defaultTab} className="space-y-4">
 
                 <TabsContent value="overview" className="space-y-4">

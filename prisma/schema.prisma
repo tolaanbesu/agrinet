@@ -18,15 +18,16 @@ model User {
   location             String?
   profileImage         String?
   verificationStatus   VerificationStatus @default(PENDING)
-  verificationDocument String?
   createdAt            DateTime           @default(now())
   updatedAt            DateTime           @updatedAt
+  verificationDocument String?
   accounts             Account[]
   articles             Article[]
   auditLogs            AuditLog[]
   cart                 Cart?
   receivedMessages     Chat[]             @relation("ReceivedMessages")
   sentMessages         Chat[]             @relation("SentMessages")
+  assignedQueries      FarmerQuery[]      @relation("ExpertQueries")
   farmerQueries        FarmerQuery[]      @relation("FarmerQueries")
   marketAlerts         MarketAlert[]
   orders               Order[]            @relation("BuyerOrders")
@@ -35,8 +36,6 @@ model User {
   reportsReceived      Report[]           @relation("ReportsReceived")
   reportsSent          Report[]           @relation("ReportsSent")
   sessions             Session[]
-
-  assignedQueries FarmerQuery[] @relation("ExpertQueries")
 
   @@map("user")
 }
@@ -196,19 +195,16 @@ model Article {
 }
 
 model FarmerQuery {
-  id       String  @id @default(uuid())
-  farmerId String
-  expertId String?
-
+  id             String      @id @default(uuid())
+  farmerId       String
   question       String
   expertResponse String?
   status         QueryStatus @default(OPEN)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  farmer User  @relation("FarmerQueries", fields: [farmerId], references: [id])
-  expert User? @relation("ExpertQueries", fields: [expertId], references: [id])
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  expertId       String?
+  expert         User?       @relation("ExpertQueries", fields: [expertId], references: [id])
+  farmer         User        @relation("FarmerQueries", fields: [farmerId], references: [id])
 
   @@index([farmerId])
   @@index([expertId])

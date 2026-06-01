@@ -46,7 +46,6 @@ export default async function ProductDetailsPage({
         <div className="bg-background min-h-screen pb-24">
             <div className="container mx-auto px-4 max-w-7xl pt-6">
                 
-                {/* Standard E-commerce Breadcrumbs */}
                 <nav className="flex items-center text-sm text-muted-foreground mb-8 overflow-x-auto whitespace-nowrap pb-2">
                     <Link href="/" className="hover:text-primary hover:underline transition-colors shrink-0">Home</Link>
                     <ChevronRight className="h-4 w-4 mx-2 shrink-0 opacity-50" />
