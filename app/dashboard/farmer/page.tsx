@@ -79,6 +79,19 @@ export default async function FarmerDashboard() {
         { title: "Customers", value: customers, icon: Users, description: "Unique buyers" },
     ];
 
+    const reports = await prisma.report.findMany({
+            where: {
+                reporterId: farmerId,
+            },
+            select: {
+                reportedUserId: true,
+            },
+        });
+
+        const reportedBuyerIds = new Set(
+            reports.map((report) => report.reportedUserId)
+        );
+
     return (
         <div className="relative min-h-screen space-y-8 pb-20">
             
@@ -165,15 +178,23 @@ export default async function FarmerDashboard() {
                                         <p className="text-sm font-semibold">{order.buyer?.name || "Customer"}</p>
                                         <p className="text-xs text-muted-foreground uppercase font-bold tracking-tighter">{order.status}</p>
 
+                                       
+                                       
                                         {/* REPORT BUTTON */}
-                                        {order.buyer && (
+                                    {order.buyer && (
+                                        reportedBuyerIds.has(order.buyer.id) ? (
+                                            <span className="text-xs text-gray-500 font-medium">
+                                                Reported
+                                            </span>
+                                        ) : (
                                             <Link
                                                 href={`/dashboard/report/${order.buyer.id}`}
                                                 className="text-xs text-red-500 hover:underline"
                                             >
                                                 Report Buyer
                                             </Link>
-                                        )}
+                                        )
+                                    )}
                                     </div>
                                     <div className="text-sm font-bold">{order.totalPrice.toFixed(2)} ETB</div>
                                 </div>
