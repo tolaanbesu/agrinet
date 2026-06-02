@@ -231,7 +231,7 @@ export default async function BuyerDashboard() {
                   >
                     <div>
                       <p className="font-medium group-hover:text-primary transition-colors text-sm">{product.name}</p>
-                      <p className="text-xs text-muted-foreground mt-0.5 font-mono">${product.price.toFixed(2)}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5 font-mono">{product.price.toFixed(2)} birr</p>
                     </div>
                     <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
                       <ArrowRight className="h-4 w-4" />
