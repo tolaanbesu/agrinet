@@ -160,8 +160,8 @@ export default function EditProfilePage() {
               />
             </div>
 
-            {/* File Upload (Farmer Only) */}
-            {role === "FARMER" && (
+            {/* File Upload (Farmer and Expert Only) */}
+            {(role === "FARMER" || role === "EXPERT") && (
               <div className="space-y-2 pt-2">
                 <Label className="flex items-center gap-2 text-primary">
                   <Upload size={14} /> Verification Document
