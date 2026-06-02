@@ -187,6 +187,16 @@ export async function toggleProductStatus(productId: string, status: "AVAILABLE"
     revalidatePath("/dashboard/admin");
 }
 
+export async function deleteProduct(productId: string) {
+    const session = await checkAdmin();
+    const product = await prisma.product.findUnique({ where: { id: productId } });
+    await prisma.product.delete({
+        where: { id: productId },
+    });
+    await createAuditLog(`Deleted product ${product?.name}`, session.user.id);
+    revalidatePath("/dashboard/admin");
+}
+
 export async function getAuditLogs() {
     await checkAdmin();
 

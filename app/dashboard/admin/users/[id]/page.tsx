@@ -151,29 +151,6 @@ export default async function UserDetailsPage({
                             </div>
                         </CardContent>
                     </Card>
-
-                    <Card className="border-none shadow-xl bg-primary/5">
-                        <CardHeader className="pb-3">
-                            <CardTitle className="text-sm font-bold uppercase tracking-widest flex items-center gap-2">
-                                <Activity className="h-4 w-4 text-primary" />
-                                Growth Status
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="space-y-4">
-                                <div className="flex justify-between items-end">
-                                    <span className="text-xs font-medium text-muted-foreground">Profile Completion</span>
-                                    <span className="text-xs font-bold">85%</span>
-                                </div>
-                                <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
-                                    <div className="h-full bg-primary w-[85%] rounded-full shadow-[0_0_10px_rgba(var(--primary),0.5)]"></div>
-                                </div>
-                                <p className="text-[10px] text-muted-foreground italic mt-2 text-center font-medium">
-                                    All required documents have been uploaded and verified.
-                                </p>
-                            </div>
-                        </CardContent>
-                    </Card>
                 </div>
 
                 {/* Main Column - Moderation & Documents */}

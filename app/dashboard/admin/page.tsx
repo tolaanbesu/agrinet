@@ -60,13 +60,6 @@ export default async function AdminDashboard({
         getProducts(),
     ]);
 
-    const fallbackStats = [
-        { title: "Total Users", value: "0", icon: Users, description: "Registered platform users" },
-        { title: "Total Products", value: "0", icon: Package, description: "Active listings" },
-        { title: "Total Orders", value: "0", icon: ShoppingCart, description: "Transactions handled" },
-        { title: "Active Reports", value: "0", icon: AlertTriangle, description: "Need attention" },
-    ];
-
     return (
         <div className="flex-1 space-y-8 p-8 pt-6">
             <div>
@@ -78,31 +71,6 @@ export default async function AdminDashboard({
             <Tabs value={defaultTab} className="space-y-6">
                 <TabsContent value="overview" className="space-y-8">
                     <StatsOverview stats={stats} />
-                    
-                    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-                        {fallbackStats.map((stat) => {
-                            const Icon = stat.icon;
-                            return (
-                                <Card key={stat.title} className="border-none shadow-md bg-gradient-to-br from-card to-muted/30">
-                                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                        <CardTitle className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-                                            {stat.title}
-                                        </CardTitle>
-                                        <div className="p-2 bg-primary/10 rounded-lg">
-                                            <Icon className="h-4 w-4 text-primary" />
-                                        </div>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <div className="text-3xl font-bold tracking-tight">{stat.value}</div>
-                                        <p className="text-xs text-muted-foreground mt-1">
-                                            {stat.description}
-                                        </p>
-                                    </CardContent>
-                                </Card>
-                            );
-                        })}
-                    </div>
-
                     <AnalyticsCharts
                         usersByRole={stats.usersByRole}
                         ordersTrend={stats.ordersTrend}
