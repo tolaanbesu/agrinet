@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
+import Link from "next/link";
 
 import {
     Card,
@@ -101,13 +102,26 @@ export default async function ExpertDashboard() {
 
     return (
         <div className="space-y-8">
-            <div>
-                <h1 className="text-3xl font-bold tracking-tight">
-                    Expert Dashboard
-                </h1>
-                <p className="text-muted-foreground mt-1">
-                    Welcome back, {session.user.name}.
-                </p>
+            <div className="flex justify-between items-end">
+                <div>
+                    <h1 className="text-3xl font-bold tracking-tight">
+                        Expert Dashboard
+                    </h1>
+                    <p className="text-muted-foreground mt-1">
+                        Welcome back, {session.user.name}.
+                    </p>
+                </div>
+
+                {/* PROFILE ACTIONS */}
+                <div className="flex gap-2">
+                    <Link
+                        href="/dashboard/profile"
+                        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-muted hover:bg-muted/70 transition"
+                    >
+                        <Users className="w-4 h-4" />
+                        My Profile
+                    </Link>
+                </div>
             </div>
 
             

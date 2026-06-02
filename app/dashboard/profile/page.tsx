@@ -120,11 +120,15 @@ export default async function ProfilePage() {
           </div>
 
           {/* FARMER VERIFICATION DOCUMENT */}
-          {session.user.role === "FARMER" && (
+          {(session.user.role === "FARMER" || session.user.role === "EXPERT") && (
             <div className="mt-10 pt-8 border-t">
               <div className="flex items-center gap-2 mb-4">
                 <FileText className="text-primary" size={20} />
-                <h3 className="text-lg font-semibold">Farmer Verification</h3>
+                <h3 className="text-lg font-semibold">
+                  {session.user.role === "EXPERT"
+                    ? "Expert Verification"
+                    : "Farmer Verification"}
+                </h3>
               </div>
 
               <div className="bg-muted/40 rounded-lg p-6 border border-dashed border-muted-foreground/20">
@@ -151,7 +155,9 @@ export default async function ProfilePage() {
                       Missing Verification Document
                     </p>
                     <p className="text-sm text-muted-foreground mb-6">
-                      To sell on our platform, please upload your agricultural license or ID.
+                      {session.user.role === "EXPERT"
+                        ? "Please upload your professional certificate, license, or identification document for verification."
+                        : "To sell on our platform, please upload your agricultural license or ID."}
                     </p>
                   </div>
                 )}
