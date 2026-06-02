@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/select"
 import { toast } from "sonner"
 import { createProductAction } from "@/actions/product-actions"
+import { nameSchema, quantitySchema, priceSchema } from "@/lib/shared-schemas"
 
 // const productFormSchema = z.object({
 //     name: z.string().min(2, "Name must be at least 2 characters"),
@@ -39,19 +40,11 @@ import { createProductAction } from "@/actions/product-actions"
 // })
 
 const productFormSchema = z.object({
-    name: z.string().min(2, "Name must be at least 2 characters"),
+    name: nameSchema,
     category: z.string().min(1, "Please select a category"),
     description: z.string().min(10, "Description must be at least 10 characters"),
-
-    price: z
-        .string()
-        .refine((val) => /^[0-9]+(\.[0-9]{1,2})?$/.test(val), "Price must be a positive number (e.g. 10 or 10.50)")
-        .refine((val) => Number(val) > 0, "Price must be greater than 0"),
-
-    quantity: z
-        .string()
-        .refine((val) => /^[0-9]+$/.test(val), "Quantity must be a whole positive number")
-        .refine((val) => Number(val) > 0, "Quantity must be greater than 0"),
+    price: priceSchema,
+    quantity: quantitySchema,
 
     unit: z
         .string()

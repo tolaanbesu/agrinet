@@ -2,6 +2,7 @@ import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
+import { contentSchema } from "@/lib/shared-schemas";
 
 export async function POST(req: Request) {
     try {
@@ -16,8 +17,13 @@ export async function POST(req: Request) {
         const body = await req.json();
         const { expertId, question } = body;
 
-        if (!expertId || !question?.trim()) {
-            return NextResponse.json({ error: "Missing data" }, { status: 400 });
+        if (!expertId) {
+            return NextResponse.json({ error: "Expert ID is required" }, { status: 400 });
+        }
+
+        const questionVal = contentSchema.safeParse(question);
+        if (!questionVal.success) {
+            return NextResponse.json({ error: questionVal.error.errors[0].message }, { status: 400 });
         }
 
         await prisma.farmerQuery.create({

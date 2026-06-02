@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth"
 import { headers } from "next/headers"
 import { cartService } from "@/lib/services/cart-service"
 import { revalidatePath } from "next/cache"
+import { quantityNumberSchema } from "@/lib/shared-schemas"
 
 export async function addToCartAction(productId: string, quantity: number = 1) {
     const session = await auth.api.getSession({
@@ -12,6 +13,11 @@ export async function addToCartAction(productId: string, quantity: number = 1) {
 
     if (!session) {
         return { success: false, error: "Please sign in to add items to cart" }
+    }
+
+    const quantityValidation = quantityNumberSchema.safeParse(quantity)
+    if (!quantityValidation.success) {
+        return { success: false, error: quantityValidation.error.errors[0].message }
     }
 
     try {
@@ -29,6 +35,11 @@ export async function updateCartQuantityAction(itemId: string, quantity: number)
     })
 
     if (!session) return { success: false, error: "Unauthorized" }
+
+    const quantityValidation = quantityNumberSchema.safeParse(quantity)
+    if (!quantityValidation.success) {
+        return { success: false, error: quantityValidation.error.errors[0].message }
+    }
 
     try {
         await cartService.updateQuantity(itemId, quantity)
