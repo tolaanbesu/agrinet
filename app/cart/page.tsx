@@ -14,6 +14,10 @@ export default async function CartPage() {
         redirect("/sign-in?callbackUrl=/cart");
     }
 
+    if (session.user.isBanned) {
+        redirect("/banned");
+    }
+
     const cart = await cartService.getCart(session.user.id);
 
     return (

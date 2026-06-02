@@ -11,11 +11,11 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { 
-    ExternalLink, 
-    ShieldCheck, 
-    ShieldAlert, 
-    Clock, 
+import {
+    ExternalLink,
+    ShieldCheck,
+    ShieldAlert,
+    Clock,
     MoreHorizontal,
     Search
 } from "lucide-react";
@@ -31,8 +31,8 @@ export function UserManagement({ initialUsers }: UserManagementProps) {
     const [users, setUsers] = useState(initialUsers);
     const [search, setSearch] = useState("");
 
-    const filteredUsers = users.filter(user => 
-        user.name?.toLowerCase().includes(search.toLowerCase()) || 
+    const filteredUsers = users.filter(user =>
+        user.name?.toLowerCase().includes(search.toLowerCase()) ||
         user.email?.toLowerCase().includes(search.toLowerCase())
     );
 
@@ -41,8 +41,8 @@ export function UserManagement({ initialUsers }: UserManagementProps) {
             <div className="flex items-center justify-between gap-4">
                 <div className="relative flex-1 max-w-md group">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                    <Input 
-                        placeholder="Search identities by name or email..." 
+                    <Input
+                        placeholder="Search identities by name or email..."
                         className="pl-10 h-11 border-none shadow-sm bg-muted/50 focus-visible:ring-primary/20 rounded-xl"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
@@ -53,20 +53,20 @@ export function UserManagement({ initialUsers }: UserManagementProps) {
                 </div>
             </div>
 
-            <div className="rounded-3xl border border-muted-foreground/10 bg-card/60 backdrop-blur-xl overflow-hidden shadow-2xl shadow-black/5 ring-1 ring-black/5">
+            <div className="rounded-3xl border border-muted-foreground/10 bg-card/60 backdrop-blur-xl overflow-hidden shadow-sm ring-1 ring-black/5">
                 <Table>
                     <TableHeader className="bg-muted/30">
                         <TableRow className="hover:bg-transparent border-b-muted-foreground/10">
-                            <TableHead className="font-black uppercase tracking-widest text-[10px] py-6 pl-6">Profile Identifier</TableHead>
-                            <TableHead className="font-black uppercase tracking-widest text-[10px] py-6">Operational Role</TableHead>
-                            <TableHead className="font-black uppercase tracking-widest text-[10px] py-6">Trust Status</TableHead>
+                            <TableHead className="font-black uppercase tracking-widest text-[10px] py-6 pl-6">Profile</TableHead>
+                            <TableHead className="font-black uppercase tracking-widest text-[10px] py-6">Role</TableHead>
+                            <TableHead className="font-black uppercase tracking-widest text-[10px] py-6">Status</TableHead>
                             <TableHead className="font-black uppercase tracking-widest text-[10px] py-6 text-right pr-6">Operations</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {filteredUsers.length > 0 ? (
                             filteredUsers.map((user) => (
-                                <TableRow 
+                                <TableRow
                                     key={user.id}
                                     className="cursor-pointer hover:bg-muted/30 group transition-all duration-300 border-b-muted-foreground/5 last:border-0"
                                     onClick={() => window.location.href = `/dashboard/admin/users/${user.id}`}
@@ -74,7 +74,7 @@ export function UserManagement({ initialUsers }: UserManagementProps) {
                                     <TableCell className="py-5 pl-6">
                                         <div className="flex items-center gap-4">
                                             <div className="relative">
-                                                <Avatar className="h-11 w-11 rounded-xl shadow-lg ring-2 ring-background group-hover:ring-primary/20 transition-all duration-500">
+                                                <Avatar className="h-11 w-11 rounded-xl shadow-sm ring-2 ring-background group-hover:ring-primary/20 transition-all duration-500">
                                                     <AvatarImage src={user.image} className="object-cover" />
                                                     <AvatarFallback className="rounded-xl font-bold bg-muted text-muted-foreground">
                                                         {user.name?.charAt(0) || "U"}

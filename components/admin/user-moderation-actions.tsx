@@ -103,7 +103,7 @@ export default function UserModerationActions({ user: initialUser }: { user: any
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <Button 
                         onClick={() => handleVerify("VERIFIED")} 
-                        className={`h-16 rounded-2xl border-none shadow-xl transition-all duration-300 font-bold text-lg flex items-center justify-start gap-4 px-6 ${
+                        className={`h-16 rounded-2xl border-none shadow-sm transition-all duration-300 font-bold text-lg flex items-center justify-start gap-4 px-6 ${
                             user.verificationStatus === "VERIFIED" 
                             ? "bg-emerald-500 hover:bg-emerald-600 ring-4 ring-emerald-500/10" 
                             : "bg-background border-2 border-muted hover:bg-muted"
@@ -122,7 +122,7 @@ export default function UserModerationActions({ user: initialUser }: { user: any
 
                     <Button 
                         onClick={() => handleVerify("REJECTED")} 
-                        className={`h-16 rounded-2xl border-none shadow-xl transition-all duration-300 font-bold text-lg flex items-center justify-start gap-4 px-6 ${
+                        className={`h-16 rounded-2xl border-none shadow-sm transition-all duration-300 font-bold text-lg flex items-center justify-start gap-4 px-6 ${
                             user.verificationStatus === "REJECTED" 
                             ? "bg-rose-500 hover:bg-rose-600 ring-4 ring-rose-500/10 text-white" 
                             : "bg-background border-2 border-muted hover:bg-muted text-rose-500"
@@ -155,7 +155,7 @@ export default function UserModerationActions({ user: initialUser }: { user: any
                         variant={user.isBanned ? "default" : "destructive"} 
                         onClick={handleToggleBan}
                         disabled={loading}
-                        className="rounded-full px-8 h-12 font-black tracking-tighter uppercase shadow-lg shadow-red-500/10"
+                        className="rounded-full px-8 h-12 font-black tracking-tighter uppercase shadow-sm"
                     >
                         {user.isBanned ? (
                             <>

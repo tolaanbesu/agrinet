@@ -32,6 +32,10 @@ export default async function ProductDetailsPage({
         redirect("/sign-in");
     }
 
+    if (session.user.isBanned) {
+        redirect("/banned");
+    }
+
     const { productId } = await params;
     const product = await productService.getProductById(productId);
 

@@ -63,10 +63,7 @@ export default async function AdminDashboard({
     return (
         <div className="flex-1 space-y-8 p-8 pt-6">
             <div>
-                <h1 className="text-3xl font-bold tracking-tight">Admin Control Panel</h1>
-                <p className="text-muted-foreground mt-1">
-                    Overview of the AGRINET system and user management.
-                </p>
+                <h1 className="text-3xl font-bold tracking-tight">Admin Panel</h1>
             </div>
             <Tabs value={defaultTab} className="space-y-6">
                 <TabsContent value="overview" className="space-y-8">

@@ -1,17 +1,17 @@
 "use server"
 
-import { auth } from "@/lib/auth"
-import { headers } from "next/headers"
+import { protectAction } from "@/lib/session-utils"
 import { orderService } from "@/lib/services/order-service"
 import { revalidatePath } from "next/cache"
 import { OrderStatus } from "@prisma/client"
 
 export async function updateOrderStatusAction(orderId: string, status: OrderStatus) {
-    const session = await auth.api.getSession({
-        headers: await headers(),
-    })
-
-    if (!session) return { success: false, error: "Unauthorized" }
+    let session;
+    try {
+        session = await protectAction();
+    } catch (error: any) {
+        return { success: false, error: error.message }
+    }
 
     // Authorization check would normally happen in the service, 
     // but we add an extra layer here if needed.

@@ -20,6 +20,10 @@ export default async function DashboardLayout({
         redirect("/sign-in");
     }
 
+    if (session.user.isBanned) {
+        redirect("/banned");
+    }
+
     const cart = await cartService.getCart(session.user.id);
     const hasCart = cart?.items?.length > 0;
 

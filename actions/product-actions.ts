@@ -1,18 +1,15 @@
 "use server"
 
-import { auth } from "@/lib/auth"
-import { headers } from "next/headers"
+import { protectAction } from "@/lib/session-utils"
 import { productService } from "@/lib/services/product-service"
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 import { nameSchema, quantityNumberSchema } from "@/lib/shared-schemas"
 
 export async function createProductAction(data: any) {
-    const session = await auth.api.getSession({
-        headers: await headers(),
-    })
+    const session = await protectAction();
 
-    if (!session || session.user.role !== "FARMER") {
+    if (session.user.role !== "FARMER") {
         return { success: false, error: "Unauthorized" }
     }
 
@@ -42,11 +39,9 @@ export async function createProductAction(data: any) {
 }
 
 export async function deleteProductAction(productId: string) {
-    const session = await auth.api.getSession({
-        headers: await headers(),
-    })
+    const session = await protectAction();
 
-    if (!session || session.user.role !== "FARMER") return
+    if (session.user.role !== "FARMER") return
 
     await productService.deleteProduct(productId)
 
@@ -54,6 +49,8 @@ export async function deleteProductAction(productId: string) {
 }
 
 export async function updateProductAction(formData: FormData) {
+    const session = await protectAction();
+    if (session.user.role !== "FARMER") throw new Error("Unauthorized");
 
     const productId = formData.get("productId") as string
 

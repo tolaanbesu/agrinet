@@ -1,16 +1,16 @@
 "use server"
 
-import { auth } from "@/lib/auth"
-import { headers } from "next/headers"
+import { protectAction } from "@/lib/session-utils"
 import { chatService } from "@/lib/services/chat-service"
 import { revalidatePath } from "next/cache"
 
 export async function sendMessageAction(receiverId: string, message: string) {
-    const session = await auth.api.getSession({
-        headers: await headers(),
-    })
-
-    if (!session) return { success: false, error: "Unauthorized" }
+    let session;
+    try {
+        session = await protectAction();
+    } catch (error: any) {
+        return { success: false, error: error.message }
+    }
 
     try {
         const newMessage = await chatService.sendMessage(session.user.id, receiverId, message)
@@ -22,11 +22,12 @@ export async function sendMessageAction(receiverId: string, message: string) {
 }
 
 export async function markAsReadAction(senderId: string) {
-    const session = await auth.api.getSession({
-        headers: await headers(),
-    })
-
-    if (!session) return { success: false, error: "Unauthorized" }
+    let session;
+    try {
+        session = await protectAction();
+    } catch (error: any) {
+        return { success: false, error: error.message }
+    }
 
     try {
         await chatService.markAsRead(session.user.id, senderId)

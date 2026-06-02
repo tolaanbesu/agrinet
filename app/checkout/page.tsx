@@ -15,6 +15,10 @@ export default async function CheckoutPage() {
         redirect("/sign-in?callbackUrl=/checkout");
     }
 
+    if (session.user.isBanned) {
+        redirect("/banned");
+    }
+
     const cart = await cartService.getCart(session.user.id);
 
     if (!cart || cart.items.length === 0) {

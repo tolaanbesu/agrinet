@@ -1,18 +1,16 @@
 "use server"
 
-import { auth } from "@/lib/auth"
-import { headers } from "next/headers"
+import { protectAction } from "@/lib/session-utils"
 import { cartService } from "@/lib/services/cart-service"
 import { revalidatePath } from "next/cache"
 import { quantityNumberSchema } from "@/lib/shared-schemas"
 
 export async function addToCartAction(productId: string, quantity: number = 1) {
-    const session = await auth.api.getSession({
-        headers: await headers(),
-    })
-
-    if (!session) {
-        return { success: false, error: "Please sign in to add items to cart" }
+    let session;
+    try {
+        session = await protectAction();
+    } catch (error: any) {
+        return { success: false, error: error.message }
     }
 
     const quantityValidation = quantityNumberSchema.safeParse(quantity)
@@ -30,11 +28,12 @@ export async function addToCartAction(productId: string, quantity: number = 1) {
 }
 
 export async function updateCartQuantityAction(itemId: string, quantity: number) {
-    const session = await auth.api.getSession({
-        headers: await headers(),
-    })
-
-    if (!session) return { success: false, error: "Unauthorized" }
+    let session;
+    try {
+        session = await protectAction();
+    } catch (error: any) {
+        return { success: false, error: error.message }
+    }
 
     const quantityValidation = quantityNumberSchema.safeParse(quantity)
     if (!quantityValidation.success) {
@@ -51,11 +50,12 @@ export async function updateCartQuantityAction(itemId: string, quantity: number)
 }
 
 export async function removeFromCartAction(itemId: string) {
-    const session = await auth.api.getSession({
-        headers: await headers(),
-    })
-
-    if (!session) return { success: false, error: "Unauthorized" }
+    let session;
+    try {
+        session = await protectAction();
+    } catch (error: any) {
+        return { success: false, error: error.message }
+    }
 
     try {
         await cartService.removeFromCart(itemId)

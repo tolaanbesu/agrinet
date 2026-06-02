@@ -30,7 +30,7 @@ export function AuditLogView({ logs }: AuditLogViewProps) {
 
     const getLogStyles = (action: string) => {
         const lowerAction = action.toLowerCase();
-        
+
         // Critical / Serious Actions
         if (lowerAction.includes("delete") || lowerAction.includes("ban") || lowerAction.includes("rejected") || lowerAction.includes("suspend")) {
             return {
@@ -41,7 +41,7 @@ export function AuditLogView({ logs }: AuditLogViewProps) {
                 severity: "CRITICAL"
             };
         }
-        
+
         // Warning / Important Actions
         if (lowerAction.includes("role") || lowerAction.includes("alert") || lowerAction.includes("verified") || lowerAction.includes("unbanned")) {
             return {
@@ -52,7 +52,7 @@ export function AuditLogView({ logs }: AuditLogViewProps) {
                 severity: "MODERATE"
             };
         }
-        
+
         // Info / Routine Actions
         return {
             bg: "bg-blue-500/10",
@@ -70,7 +70,7 @@ export function AuditLogView({ logs }: AuditLogViewProps) {
                     <div className="h-8 w-1 bg-primary rounded-full"></div>
                     <h2 className="text-xl font-black uppercase tracking-tight flex items-center gap-2">
                         <Activity className="h-5 w-5 text-primary" />
-                        Operation Logs
+                        Logs
                     </h2>
                 </div>
                 <Badge variant="outline" className="rounded-full bg-muted/50 px-3 font-bold border-none text-[10px] uppercase tracking-widest">
@@ -78,14 +78,14 @@ export function AuditLogView({ logs }: AuditLogViewProps) {
                 </Badge>
             </div>
 
-            <div className="rounded-3xl border border-muted-foreground/10 bg-card/60 backdrop-blur-xl overflow-hidden shadow-2xl shadow-black/5 ring-1 ring-black/5">
+            <div className="rounded-3xl border border-muted-foreground/10 bg-card/60 backdrop-blur-xl overflow-hidden shadow-sm ring-1 ring-black/5">
                 <ScrollArea className="h-[600px]">
                     <Table>
                         <TableHeader className="bg-muted/30 sticky top-0 z-10">
                             <TableRow className="hover:bg-transparent border-b-muted-foreground/10">
-                                <TableHead className="font-black uppercase tracking-widest text-[10px] py-6 pl-8 w-[200px]">Event Timing</TableHead>
-                                <TableHead className="font-black uppercase tracking-widest text-[10px] py-6">Origin Identity</TableHead>
-                                <TableHead className="font-black uppercase tracking-widest text-[10px] py-6">Operation Details</TableHead>
+                                <TableHead className="font-black uppercase tracking-widest text-[10px] py-6 pl-8 w-[200px]">Timeline</TableHead>
+                                <TableHead className="font-black uppercase tracking-widest text-[10px] py-6">User</TableHead>
+                                <TableHead className="font-black uppercase tracking-widest text-[10px] py-6">Operation Detail</TableHead>
                                 <TableHead className="font-black uppercase tracking-widest text-[10px] py-6 text-right pr-8">Context ID</TableHead>
                             </TableRow>
                         </TableHeader>

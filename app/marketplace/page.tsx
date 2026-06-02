@@ -13,6 +13,7 @@ import { Suspense } from "react";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { Badge } from "@/components/ui/badge";
+import { redirect } from "next/navigation";
 
 interface MarketplacePageProps {
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -27,6 +28,10 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
     const session = await auth.api.getSession({
         headers: await headers(),
     });
+
+    if (session?.user.isBanned) {
+        redirect("/banned");
+    }
 
 
     const products = await prisma.product.findMany({

@@ -76,7 +76,7 @@ export function ProductManagement({ initialProducts }: ProductManagementProps) {
                 </div>
             </div>
 
-            <div className="rounded-3xl border border-muted-foreground/10 bg-card/60 backdrop-blur-xl overflow-hidden shadow-2xl shadow-black/5 ring-1 ring-black/5">
+            <div className="rounded-3xl border border-muted-foreground/10 bg-card/60 backdrop-blur-xl overflow-hidden shadow-sm ring-1 ring-black/5">
                 <Table>
                     <TableHeader className="bg-muted/30">
                         <TableRow className="hover:bg-transparent border-b-muted-foreground/10">
@@ -94,7 +94,7 @@ export function ProductManagement({ initialProducts }: ProductManagementProps) {
                                     <TableCell className="py-5 pl-6">
                                         <div className="flex items-center gap-4">
                                             {product.images?.[0] ? (
-                                                <div className="h-12 w-12 rounded-xl overflow-hidden shadow-lg border border-muted group-hover:scale-105 transition-transform">
+                                                <div className="h-12 w-12 rounded-xl overflow-hidden shadow-sm border border-muted group-hover:scale-105 transition-transform">
                                                     <img src={product.images[0]} alt={product.name} className="h-full w-full object-cover" />
                                                 </div>
                                             ) : (

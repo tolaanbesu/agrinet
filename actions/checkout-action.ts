@@ -1,7 +1,6 @@
 "use server"
 
-import { auth } from "@/lib/auth"
-import { headers } from "next/headers"
+import { protectAction } from "@/lib/session-utils"
 import { cartService } from "@/lib/services/cart-service"
 import { orderService } from "@/lib/services/order-service"
 import { revalidatePath } from "next/cache"
@@ -11,11 +10,7 @@ import prisma from "@/lib/prisma"
 export async function placeOrderAction(data: { phone: string, address: string, paymentMethod: string }) {
 
     const APP_URL = process.env.NEXT_PUBLIC_APP_URL;
-    const session = await auth.api.getSession({
-        headers: await headers(),
-    })
-
-    if (!session) return { success: false, error: "Unauthorized" }
+    const session = await protectAction();
 
     try {
 

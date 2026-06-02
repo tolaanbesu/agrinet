@@ -1,16 +1,18 @@
 "use server"
 
-import { auth } from "@/lib/auth"
-import { headers } from "next/headers"
+import { protectAction } from "@/lib/session-utils"
 import prisma from "@/lib/prisma"
 import { titleSchema, contentSchema } from "@/lib/shared-schemas"
 
 export async function createArticleAction(data: any) {
-    const session = await auth.api.getSession({
-        headers: await headers(),
-    })
+    let session;
+    try {
+        session = await protectAction();
+    } catch (error: any) {
+        return { success: false, error: error.message }
+    }
 
-    if (!session || session.user.role !== "EXPERT") {
+    if (session.user.role !== "EXPERT") {
         return { success: false, error: "Unauthorized" }
     }
 

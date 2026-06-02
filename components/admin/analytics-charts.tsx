@@ -32,18 +32,11 @@ const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#8b5cf6", "#ef4444"];
 export function AnalyticsCharts({ usersByRole, ordersTrend }: AnalyticsChartsProps) {
     return (
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-7">
-            <Card className="lg:col-span-4 border border-muted/50 shadow-md bg-card/40 backdrop-blur-xl overflow-hidden">
+            <Card className="lg:col-span-4 border border-muted/50 shadow-sm bg-card/40 backdrop-blur-xl overflow-hidden">
                 <CardHeader className="pb-0 pt-6 px-6">
                     <div className="flex items-center justify-between">
                         <div>
-                            <CardTitle className="text-xl font-black tracking-tight">Growth Velocity</CardTitle>
-                            <CardDescription className="text-xs font-medium uppercase tracking-widest text-muted-foreground/60 mt-1">
-                                Transaction Volume • Last 7 Epochs
-                            </CardDescription>
-                        </div>
-                        <div className="flex items-center gap-1 bg-primary/10 px-3 py-1 rounded-full border border-primary/20">
-                            <div className="h-2 w-2 rounded-full bg-primary animate-pulse"></div>
-                            <span className="text-[10px] font-black text-primary uppercase">Live Feed</span>
+                            <CardTitle className="text-xl font-black tracking-tight">Transactions</CardTitle>
                         </div>
                     </div>
                 </CardHeader>
@@ -53,8 +46,8 @@ export function AnalyticsCharts({ usersByRole, ordersTrend }: AnalyticsChartsPro
                             <AreaChart data={ordersTrend} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                                 <defs>
                                     <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.15}/>
-                                        <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                                        <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.15} />
+                                        <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
                                     </linearGradient>
                                 </defs>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} strokeOpacity={0.1} />
@@ -79,10 +72,10 @@ export function AnalyticsCharts({ usersByRole, ordersTrend }: AnalyticsChartsPro
                                     fontWeight={600}
                                 />
                                 <Tooltip
-                                    contentStyle={{ 
-                                        backgroundColor: 'rgba(0,0,0,0.8)', 
-                                        borderRadius: '16px', 
-                                        border: 'none', 
+                                    contentStyle={{
+                                        backgroundColor: 'rgba(0,0,0,0.8)',
+                                        borderRadius: '16px',
+                                        border: 'none',
                                         color: '#fff',
                                         boxShadow: '0 20px 25px -5px rgba(0,0,0,0.3)',
                                         backdropFilter: 'blur(8px)',
@@ -114,12 +107,9 @@ export function AnalyticsCharts({ usersByRole, ordersTrend }: AnalyticsChartsPro
                 </CardContent>
             </Card>
 
-            <Card className="lg:col-span-3 border border-muted/50 shadow-md bg-card/40 backdrop-blur-xl flex flex-col">
+            <Card className="lg:col-span-3 border border-muted/50 shadow-sm bg-card/40 backdrop-blur-xl flex flex-col">
                 <CardHeader className="pt-6 px-6">
-                    <CardTitle className="text-xl font-black tracking-tight">Ecosystem Mix</CardTitle>
-                    <CardDescription className="text-xs font-medium uppercase tracking-widest text-muted-foreground/60 mt-1">
-                        Active User Segment Distribution
-                    </CardDescription>
+                    <CardTitle className="text-xl font-black tracking-tight">Users Distribution</CardTitle>
                 </CardHeader>
                 <CardContent className="flex-1 flex flex-col justify-center">
                     <div className="h-[280px]">
@@ -136,17 +126,17 @@ export function AnalyticsCharts({ usersByRole, ordersTrend }: AnalyticsChartsPro
                                     stroke="none"
                                 >
                                     {usersByRole.map((entry, index) => (
-                                        <Cell 
-                                            key={`cell-${index}`} 
-                                            fill={COLORS[index % COLORS.length]} 
-                                            className="hover:opacity-80 transition-opacity cursor-pointer shadow-2xl"
+                                        <Cell
+                                            key={`cell-${index}`}
+                                            fill={COLORS[index % COLORS.length]}
+                                            className="hover:opacity-80 transition-opacity cursor-pointer shadow-sm"
                                         />
                                     ))}
                                 </Pie>
                                 <Tooltip
-                                     contentStyle={{ 
-                                        backgroundColor: 'rgba(255,255,255,0.95)', 
-                                        borderRadius: '12px', 
+                                    contentStyle={{
+                                        backgroundColor: 'rgba(255,255,255,0.95)',
+                                        borderRadius: '12px',
                                         border: '1px solid rgba(0,0,0,0.1)',
                                         boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)',
                                         fontSize: '11px',

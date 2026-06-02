@@ -14,6 +14,10 @@ async function checkAdmin() {
     if (!session || session.user.role !== "ADMIN") {
         throw new Error("Unauthorized");
     }
+    
+    if (session.user.isBanned) {
+        throw new Error("Admin account suspended.");
+    }
     return session;
 }
 
@@ -250,6 +254,33 @@ export async function getReports() {
             createdAt: "desc",
         },
     });
+}
+
+export async function deleteReport(reportId: string) {
+    const session = await checkAdmin();
+    await prisma.report.delete({
+        where: { id: reportId },
+    });
+    await createAuditLog(`Dismissed report ${reportId.slice(0, 8)}`, session.user.id);
+    revalidatePath("/dashboard/admin");
+}
+
+export async function resolveReport(reportId: string, userId: string, action: "BAN" | "DISMISS") {
+    const session = await checkAdmin();
+    
+    if (action === "BAN") {
+        await prisma.user.update({
+            where: { id: userId },
+            data: { isBanned: true },
+        });
+        await createAuditLog(`Banned user ${userId} via report resolution`, session.user.id);
+    }
+
+    await prisma.report.delete({
+        where: { id: reportId },
+    });
+    
+    revalidatePath("/dashboard/admin");
 }
 
 export async function getMarketAlerts() {
