@@ -173,6 +173,8 @@ export default function EditProfilePage() {
                       <p className="text-xs text-muted-foreground px-4 text-center">
                         {file ? (
                           <span className="text-primary font-medium">{file.name}</span>
+                        ) : role === "EXPERT" ? (
+                          "Upload professional certificate, license, or ID for verification"
                         ) : (
                           "Upload license or ID for verification"
                         )}
