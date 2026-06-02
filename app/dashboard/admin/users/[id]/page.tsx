@@ -6,10 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { 
-    Mail, 
-    Phone, 
-    MapPin, 
+import {
+    Mail,
+    Phone,
+    MapPin,
     Calendar,
     FileText,
     ArrowLeft,
@@ -27,7 +27,7 @@ export default async function UserDetailsPage({
     params: Promise<{ id: string }>;
 }) {
     const { id } = await params;
-    
+
     const session = await auth.api.getSession({
         headers: await headers(),
     });
@@ -54,17 +54,12 @@ export default async function UserDetailsPage({
                     </Button>
                     <div>
                         <div className="flex items-center gap-3">
-                           <h1 className="text-4xl font-black tracking-tight">{user.name}</h1>
-                           {user.isBanned && (
-                               <Badge variant="destructive" className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest shadow-lg shadow-red-500/20">
-                                   Suspended
-                               </Badge>
-                           )}
+                            {user.isBanned && (
+                                <Badge variant="destructive" className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest shadow-lg shadow-red-500/20">
+                                    Suspended
+                                </Badge>
+                            )}
                         </div>
-                        <p className="text-muted-foreground mt-2 font-medium flex items-center gap-2">
-                            <Fingerprint className="h-4 w-4" />
-                            User ID: <span className="font-mono text-xs bg-muted px-2 py-0.5 rounded italic">{user.id}</span>
-                        </p>
                     </div>
                 </div>
                 <div className="flex items-center gap-3">
@@ -72,13 +67,12 @@ export default async function UserDetailsPage({
                         {user.role}
                     </Badge>
                     <Badge
-                        className={`px-4 py-1.5 rounded-full font-bold text-sm shadow-md ${
-                            user.verificationStatus === "VERIFIED" 
-                            ? "bg-emerald-500 hover:bg-emerald-600 shadow-emerald-500/20" 
-                            : user.verificationStatus === "PENDING" 
-                            ? "bg-amber-500 hover:bg-amber-600 shadow-amber-500/20" 
-                            : "bg-rose-500 hover:bg-rose-600 shadow-rose-500/20"
-                        }`}
+                        className={`px-4 py-1.5 rounded-full font-bold text-sm shadow-md ${user.verificationStatus === "VERIFIED"
+                            ? "bg-emerald-500 hover:bg-emerald-600 shadow-emerald-500/20"
+                            : user.verificationStatus === "PENDING"
+                                ? "bg-amber-500 hover:bg-amber-600 shadow-amber-500/20"
+                                : "bg-rose-500 hover:bg-rose-600 shadow-rose-500/20"
+                            }`}
                     >
                         {user.verificationStatus}
                     </Badge>
@@ -88,9 +82,9 @@ export default async function UserDetailsPage({
             <div className="grid gap-8 md:grid-cols-12">
                 {/* Lateral Column - Profile Info */}
                 <div className="md:col-span-4 space-y-8">
-                    <Card className="border-none shadow-2xl overflow-hidden group">
+                    <Card className="border-none shadow-sm overflow-hidden group">
                         <div className="h-32 bg-gradient-to-br from-primary via-primary/80 to-primary/40 relative">
-                             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20"></div>
+                            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20"></div>
                         </div>
                         <CardHeader className="relative pt-0 pb-6 flex flex-col items-center -mt-16">
                             <div className="p-1.5 bg-background rounded-full shadow-2xl group-hover:scale-105 transition-transform duration-500">
@@ -161,15 +155,13 @@ export default async function UserDetailsPage({
                             <div className="h-8 w-1 bg-primary rounded-full"></div>
                             <h2 className="text-xl font-black uppercase tracking-tight flex items-center gap-2">
                                 <Shield className="h-5 w-5 text-primary" />
-                                Governance & Moderation
+                                Moderation
                             </h2>
                         </div>
-                        
+
                         <Card className="border-none shadow-2xl bg-card/60 backdrop-blur-xl border border-white/5 shadow-black/5 ring-1 ring-black/5">
                             <CardHeader className="pb-2">
-                                <CardTitle className="text-lg font-bold">Account Interventions</CardTitle>
-                                <CardDescription className="text-sm font-medium">Direct management tools for this specific account.</CardDescription>
-                            </CardHeader>
+                                <CardTitle className="text-lg font-bold">Account Management</CardTitle>                            </CardHeader>
                             <CardContent className="pt-4">
                                 <UserModerationActions user={user} />
                             </CardContent>
@@ -203,13 +195,13 @@ export default async function UserDetailsPage({
                                     <div className="relative aspect-video md:aspect-[16/9] bg-muted/20 flex items-center justify-center overflow-hidden">
                                         {user.verificationDocument.match(/\.(jpeg|jpg|gif|png|webp)$/i) ? (
                                             <div className="w-full h-full p-6 relative group">
-                                                <img 
-                                                    src={user.verificationDocument} 
-                                                    alt="Verification Document" 
+                                                <img
+                                                    src={user.verificationDocument}
+                                                    alt="Verification Document"
                                                     className="w-full h-full object-contain rounded-xl shadow-2xl group-hover:scale-[1.02] transition-all duration-700 pointer-events-none select-none"
                                                 />
                                                 <div className="absolute inset-x-0 bottom-0 p-10 bg-gradient-to-t from-black/80 to-transparent flex items-end justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                                                     <Button variant="outline" className="glass bg-white/20 text-white border-white/20 font-bold hover:bg-white hover:text-black transition-all" asChild>
+                                                    <Button variant="outline" className="glass bg-white/20 text-white border-white/20 font-bold hover:bg-white hover:text-black transition-all" asChild>
                                                         <a href={user.verificationDocument} target="_blank" rel="noopener noreferrer">
                                                             Expand Image in New Tab
                                                         </a>

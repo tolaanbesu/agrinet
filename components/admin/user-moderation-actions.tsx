@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { 
-    ShieldCheck, 
-    ShieldAlert, 
-    UserX, 
-    UserCheck, 
+import {
+    ShieldCheck,
+    ShieldAlert,
+    UserX,
+    UserCheck,
     Trash2,
     RotateCcw,
     Zap,
@@ -64,12 +64,12 @@ export default function UserModerationActions({ user: initialUser }: { user: any
         setLoading(true);
         try {
             await deleteUser(user.id);
-            toast.success("Account purged", {
+            toast.success("Account deleted", {
                 description: "All records have been permanently removed."
             });
             router.push("/dashboard/admin?tab=users");
         } catch (error) {
-            toast.error("Purge failed", {
+            toast.error("Deletion failed", {
                 description: "Critical dependencies found. Consider suspending instead."
             });
             console.error(error);
@@ -82,32 +82,27 @@ export default function UserModerationActions({ user: initialUser }: { user: any
         <div className="space-y-8">
             <div className="space-y-4">
                 <div className="flex items-center justify-between px-1">
-                    <h3 className="text-sm font-black uppercase tracking-[0.2em] text-muted-foreground/60 flex items-center gap-2">
-                        <Zap className="h-3 w-3 text-amber-500" />
-                        Verification Pipeline
-                    </h3>
                     {user.verificationStatus !== "PENDING" && (
-                         <Button 
-                         variant="ghost" 
-                         size="sm"
-                         onClick={() => handleVerify("PENDING")}
-                         disabled={loading}
-                         className="h-8 text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:bg-muted"
-                     >
-                         <History className="mr-1.5 h-3 w-3" />
-                         Reset Queue
-                     </Button>
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleVerify("PENDING")}
+                            disabled={loading}
+                            className="h-8 text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:bg-muted"
+                        >
+                            <History className="mr-1.5 h-3 w-3" />
+                            Reset Queue
+                        </Button>
                     )}
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <Button 
-                        onClick={() => handleVerify("VERIFIED")} 
-                        className={`h-16 rounded-2xl border-none shadow-sm transition-all duration-300 font-bold text-lg flex items-center justify-start gap-4 px-6 ${
-                            user.verificationStatus === "VERIFIED" 
-                            ? "bg-emerald-500 hover:bg-emerald-600 ring-4 ring-emerald-500/10" 
+                    <Button
+                        onClick={() => handleVerify("VERIFIED")}
+                        className={`h-16 rounded-2xl border-none shadow-sm transition-all duration-300 font-bold text-lg flex items-center justify-start gap-4 px-6 ${user.verificationStatus === "VERIFIED"
+                            ? "bg-emerald-500 hover:bg-emerald-600 ring-4 ring-emerald-500/10"
                             : "bg-background border-2 border-muted hover:bg-muted"
-                        }`}
+                            }`}
                         variant={user.verificationStatus === "VERIFIED" ? "default" : "outline"}
                         disabled={loading || user.verificationStatus === "VERIFIED"}
                     >
@@ -115,18 +110,15 @@ export default function UserModerationActions({ user: initialUser }: { user: any
                             <ShieldCheck className="h-6 w-6" />
                         </div>
                         <div className="text-left">
-                            <p className="leading-tight">Approve</p>
-                            <p className="text-[10px] font-medium opacity-70">Mark as Trusted Identity</p>
-                        </div>
+                            <p className="leading-tight">Approve</p>                        </div>
                     </Button>
 
-                    <Button 
-                        onClick={() => handleVerify("REJECTED")} 
-                        className={`h-16 rounded-2xl border-none shadow-sm transition-all duration-300 font-bold text-lg flex items-center justify-start gap-4 px-6 ${
-                            user.verificationStatus === "REJECTED" 
-                            ? "bg-rose-500 hover:bg-rose-600 ring-4 ring-rose-500/10 text-white" 
+                    <Button
+                        onClick={() => handleVerify("REJECTED")}
+                        className={`h-16 rounded-2xl border-none shadow-sm transition-all duration-300 font-bold text-lg flex items-center justify-start gap-4 px-6 ${user.verificationStatus === "REJECTED"
+                            ? "bg-rose-500 hover:bg-rose-600 ring-4 ring-rose-500/10 text-white"
                             : "bg-background border-2 border-muted hover:bg-muted text-rose-500"
-                        }`}
+                            }`}
                         variant={user.verificationStatus === "REJECTED" ? "default" : "outline"}
                         disabled={loading || user.verificationStatus === "REJECTED"}
                     >
@@ -135,7 +127,6 @@ export default function UserModerationActions({ user: initialUser }: { user: any
                         </div>
                         <div className="text-left">
                             <p className="leading-tight">Reject</p>
-                            <p className="text-[10px] font-medium opacity-70">Deny Access Credentials</p>
                         </div>
                     </Button>
                 </div>
@@ -143,16 +134,16 @@ export default function UserModerationActions({ user: initialUser }: { user: any
 
             <div className="space-y-4 pt-4">
                 <h3 className="text-sm font-black uppercase tracking-[0.2em] text-muted-foreground/60 px-1">
-                    Risk Assessment & Hard Actions
+                    Account Suspension
                 </h3>
-                
+
                 <div className="flex flex-wrap items-center justify-between gap-4 p-5 rounded-3xl bg-muted/30 border-2 border-dashed border-muted-foreground/10">
                     <div className="space-y-1">
                         <p className="font-bold">System Suspension</p>
                         <p className="text-xs text-muted-foreground font-medium">Prevent all platform interactions immediately.</p>
                     </div>
-                    <Button 
-                        variant={user.isBanned ? "default" : "destructive"} 
+                    <Button
+                        variant={user.isBanned ? "default" : "destructive"}
                         onClick={handleToggleBan}
                         disabled={loading}
                         className="rounded-full px-8 h-12 font-black tracking-tighter uppercase shadow-sm"
@@ -172,14 +163,14 @@ export default function UserModerationActions({ user: initialUser }: { user: any
                 </div>
 
                 <div className="flex items-center justify-center pt-2">
-                    <Button 
-                        variant="ghost" 
-                        className="text-xs font-bold text-red-600/60 hover:text-red-700 hover:bg-red-50 rounded-full transition-colors" 
+                    <Button
+                        variant="ghost"
+                        className="text-xs font-bold text-red-600/60 hover:text-red-700 hover:bg-red-50 rounded-full transition-colors"
                         onClick={handleDelete}
                         disabled={loading}
                     >
                         <Trash2 className="mr-2 h-3 w-3" />
-                        Permanent Account Purge
+                        Delete Account
                     </Button>
                 </div>
             </div>
