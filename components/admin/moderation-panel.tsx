@@ -59,7 +59,7 @@ export function ModerationPanel({ reports: initialReports }: ModerationPanelProp
                 <div className="h-8 w-1 bg-rose-500 rounded-full"></div>
                 <h2 className="text-xl font-black uppercase tracking-tight flex items-center gap-2">
                     <Scale className="h-5 w-5 text-rose-500" />
-                    Pending Moderation Tickets
+                    Reported Messages
                 </h2>
             </div>
 
@@ -73,7 +73,7 @@ export function ModerationPanel({ reports: initialReports }: ModerationPanelProp
                                     <div className="flex items-center gap-2">
                                         <CardTitle className="text-sm font-black uppercase tracking-widest text-rose-500 flex items-center gap-2">
                                             <ShieldAlert className="h-4 w-4" />
-                                            Case Protocol #{report.id.slice(0, 8).toUpperCase()}
+                                            ID #{report.id.slice(0, 8).toUpperCase()}
                                         </CardTitle>
                                         <Badge variant="outline" className="rounded-full bg-muted/30 border-none text-[10px] font-bold px-3">
                                             <Clock className="h-3 w-3 mr-1.5 opacity-60" />
