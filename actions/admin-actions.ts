@@ -4,6 +4,7 @@ import prisma from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { titleSchema, contentSchema } from "@/lib/shared-schemas";
 
 async function checkAdmin() {
     const session = await auth.api.getSession({
@@ -227,6 +228,16 @@ export async function createMarketAlert(data: { title: string, description: stri
     });
 
     if (!session?.user?.id) throw new Error("Unauthorized");
+
+    const titleVal = titleSchema.safeParse(data.title);
+    if (!titleVal.success) {
+        throw new Error(titleVal.error.errors[0].message);
+    }
+
+    const descVal = contentSchema.safeParse(data.description);
+    if (!descVal.success) {
+        throw new Error(descVal.error.errors[0].message);
+    }
 
     const alert = await prisma.marketAlert.create({
         data: {

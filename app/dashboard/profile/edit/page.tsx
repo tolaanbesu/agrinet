@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner"; 
+import { nameSchema, phoneSchema, locationSchema } from "@/lib/shared-schemas";
 
 export default function EditProfilePage() {
   const router = useRouter();
@@ -42,6 +43,26 @@ export default function EditProfilePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Client-side validation
+    const nameVal = nameSchema.safeParse(form.name);
+    if (!nameVal.success) {
+      toast.error(nameVal.error.errors[0].message);
+      return;
+    }
+
+    const phoneVal = phoneSchema.safeParse(form.phone);
+    if (form.phone && !phoneVal.success) {
+      toast.error(phoneVal.error.errors[0].message);
+      return;
+    }
+
+    const locationVal = locationSchema.safeParse(form.location);
+    if (form.location && !locationVal.success) {
+      toast.error(locationVal.error.errors[0].message);
+      return;
+    }
+
     setSubmitting(true);
 
     const formData = new FormData();

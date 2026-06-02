@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import prisma from "@/lib/prisma";
 import cloudinary from "@/lib/cloudinary";
+import { nameSchema, phoneSchema, locationSchema } from "@/lib/shared-schemas";
 
 export async function GET() {
   const session = await auth.api.getSession({
@@ -29,6 +30,27 @@ export async function POST(req: Request) {
   const name = formData.get("name") as string;
   const phone = formData.get("phone") as string;
   const location = formData.get("location") as string;
+
+  if (name) {
+    const result = nameSchema.safeParse(name);
+    if (!result.success) {
+      return new Response(JSON.stringify({ error: result.error.errors[0].message }), { status: 400 });
+    }
+  }
+
+  if (phone) {
+    const result = phoneSchema.safeParse(phone);
+    if (!result.success) {
+      return new Response(JSON.stringify({ error: result.error.errors[0].message }), { status: 400 });
+    }
+  }
+
+  if (location) {
+    const result = locationSchema.safeParse(location);
+    if (!result.success) {
+      return new Response(JSON.stringify({ error: result.error.errors[0].message }), { status: 400 });
+    }
+  }
   const file = formData.get("document") as File | null;
 
   let documentUrl: string | undefined;

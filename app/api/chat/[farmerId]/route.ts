@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
+import { contentSchema } from "@/lib/shared-schemas";
 
 export async function GET(
   req: Request,
@@ -67,6 +68,11 @@ export async function POST(
 
   const { farmerId } = await context.params;
   const body = await req.json();
+
+  const messageVal = contentSchema.safeParse(body.message);
+  if (!messageVal.success) {
+    return NextResponse.json({ error: messageVal.error.errors[0].message }, { status: 400 });
+  }
 
   await prisma.chat.create({
     data: {
