@@ -11,18 +11,17 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, ShieldAlert, ShieldCheck, UserX, UserCheck, Trash2 } from "lucide-react";
-import { toggleUserBan, updateVerificationStatus, deleteUser } from "@/actions/admin-actions";
-import { toast } from "sonner";
+import { 
+    ExternalLink, 
+    ShieldCheck, 
+    ShieldAlert, 
+    Clock, 
+    MoreHorizontal,
+    Search
+} from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import Link from "next/link";
+import { Input } from "@/components/ui/input";
 
 interface UserManagementProps {
     initialUsers: any[];
@@ -30,120 +29,116 @@ interface UserManagementProps {
 
 export function UserManagement({ initialUsers }: UserManagementProps) {
     const [users, setUsers] = useState(initialUsers);
+    const [search, setSearch] = useState("");
 
-    const handleToggleBan = async (userId: string, isBanned: boolean) => {
-        try {
-            await toggleUserBan(userId, !isBanned);
-            setUsers(users.map(u => u.id === userId ? { ...u, isBanned: !isBanned } : u));
-            toast.success(isBanned ? "User unbanned" : "User banned");
-        } catch (error) {
-            toast.error("Failed to update user status");
-        }
-    };
-
-    const handleVerify = async (userId: string, status: "VERIFIED" | "REJECTED") => {
-        try {
-            await updateVerificationStatus(userId, status);
-            setUsers(users.map(u => u.id === userId ? { ...u, verificationStatus: status } : u));
-            toast.success(`User ${status.toLowerCase()}`);
-        } catch (error) {
-            toast.error("Failed to verify user");
-        }
-    };
-
-    const handleDelete = async (userId: string) => {
-        if (!confirm("Are you sure you want to delete this user? This cannot be undone.")) return;
-        try {
-            await deleteUser(userId);
-            setUsers(users.filter(u => u.id !== userId));
-            toast.success("User deleted");
-        } catch (error) {
-            toast.error("Failed to delete user");
-        }
-    };
+    const filteredUsers = users.filter(user => 
+        user.name?.toLowerCase().includes(search.toLowerCase()) || 
+        user.email?.toLowerCase().includes(search.toLowerCase())
+    );
 
     return (
-        <div className="rounded-md border">
-            <Table>
-                <TableHeader>
-                    <TableRow>
-                        <TableHead>User</TableHead>
-                        <TableHead>Role</TableHead>
-                        <TableHead>Verification</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {users.map((user) => (
-                        <TableRow key={user.id}>
-                            <TableCell className="flex items-center gap-3">
-                                <Avatar className="h-8 w-8">
-                                    <AvatarImage src={user.image} />
-                                    <AvatarFallback>{user.name?.charAt(0) || "U"}</AvatarFallback>
-                                </Avatar>
-                                <div>
-                                    <div className="font-medium">{user.name}</div>
-                                    <div className="text-xs text-muted-foreground">{user.email}</div>
-                                </div>
-                            </TableCell>
-                            <TableCell>
-                                <Badge variant="outline">{user.role}</Badge>
-                            </TableCell>
-                            <TableCell>
-                                <Badge
-                                    variant={user.verificationStatus === "VERIFIED" ? "default" : user.verificationStatus === "PENDING" ? "secondary" : "destructive"}
-                                >
-                                    {user.verificationStatus}
-                                </Badge>
-                            </TableCell>
-                            <TableCell>
-                                {user.isBanned ? (
-                                    <Badge variant="destructive">BANNED</Badge>
-                                ) : (
-                                    <Badge variant="default" className="bg-green-500 hover:bg-green-600 border-none">ACTIVE</Badge>
-                                )}
-                            </TableCell>
-                            <TableCell className="text-right">
-                                <DropdownMenu>
-                                    <DropdownMenuTrigger asChild>
-                                        <Button variant="ghost" className="h-8 w-8 p-0">
-                                            <MoreHorizontal className="h-4 w-4" />
-                                        </Button>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent align="end">
-                                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                        <DropdownMenuItem onClick={() => handleToggleBan(user.id, user.isBanned)}>
-                                            {user.isBanned ? <UserCheck className="mr-2 h-4 w-4" /> : <UserX className="mr-2 h-4 w-4" />}
-                                            {user.isBanned ? "Unban User" : "Ban User"}
-                                        </DropdownMenuItem>
+        <div className="space-y-6">
+            <div className="flex items-center justify-between gap-4">
+                <div className="relative flex-1 max-w-md group">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                    <Input 
+                        placeholder="Search identities by name or email..." 
+                        className="pl-10 h-11 border-none shadow-sm bg-muted/50 focus-visible:ring-primary/20 rounded-xl"
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                    />
+                </div>
+                <div className="hidden md:flex gap-2">
+                    <Badge variant="outline" className="h-11 px-4 rounded-xl border-dashed">Total: {users.length}</Badge>
+                </div>
+            </div>
 
-                                        {user.verificationStatus === "PENDING" && (
-                                            <>
-                                                <DropdownMenuSeparator />
-                                                <DropdownMenuItem onClick={() => handleVerify(user.id, "VERIFIED")}>
-                                                    <ShieldCheck className="mr-2 h-4 w-4 text-green-500" />
-                                                    Approve
-                                                </DropdownMenuItem>
-                                                <DropdownMenuItem onClick={() => handleVerify(user.id, "REJECTED")}>
-                                                    <ShieldAlert className="mr-2 h-4 w-4 text-red-500" />
-                                                    Reject
-                                                </DropdownMenuItem>
-                                            </>
-                                        )}
-
-                                        <DropdownMenuSeparator />
-                                        <DropdownMenuItem onClick={() => handleDelete(user.id)} className="text-red-600">
-                                            <Trash2 className="mr-2 h-4 w-4" />
-                                            Delete User
-                                        </DropdownMenuItem>
-                                    </DropdownMenuContent>
-                                </DropdownMenu>
-                            </TableCell>
+            <div className="rounded-3xl border border-muted-foreground/10 bg-card/60 backdrop-blur-xl overflow-hidden shadow-2xl shadow-black/5 ring-1 ring-black/5">
+                <Table>
+                    <TableHeader className="bg-muted/30">
+                        <TableRow className="hover:bg-transparent border-b-muted-foreground/10">
+                            <TableHead className="font-black uppercase tracking-widest text-[10px] py-6 pl-6">Profile Identifier</TableHead>
+                            <TableHead className="font-black uppercase tracking-widest text-[10px] py-6">Operational Role</TableHead>
+                            <TableHead className="font-black uppercase tracking-widest text-[10px] py-6">Trust Status</TableHead>
+                            <TableHead className="font-black uppercase tracking-widest text-[10px] py-6 text-right pr-6">Operations</TableHead>
                         </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
+                    </TableHeader>
+                    <TableBody>
+                        {filteredUsers.length > 0 ? (
+                            filteredUsers.map((user) => (
+                                <TableRow 
+                                    key={user.id}
+                                    className="cursor-pointer hover:bg-muted/30 group transition-all duration-300 border-b-muted-foreground/5 last:border-0"
+                                    onClick={() => window.location.href = `/dashboard/admin/users/${user.id}`}
+                                >
+                                    <TableCell className="py-5 pl-6">
+                                        <div className="flex items-center gap-4">
+                                            <div className="relative">
+                                                <Avatar className="h-11 w-11 rounded-xl shadow-lg ring-2 ring-background group-hover:ring-primary/20 transition-all duration-500">
+                                                    <AvatarImage src={user.image} className="object-cover" />
+                                                    <AvatarFallback className="rounded-xl font-bold bg-muted text-muted-foreground">
+                                                        {user.name?.charAt(0) || "U"}
+                                                    </AvatarFallback>
+                                                </Avatar>
+                                                {user.isBanned && (
+                                                    <div className="absolute -top-1 -right-1 h-3 w-3 bg-rose-500 rounded-full border-2 border-background ring-2 ring-rose-500/20 animate-pulse"></div>
+                                                )}
+                                            </div>
+                                            <div className="space-y-0.5">
+                                                <div className="font-black tracking-tight text-sm group-hover:text-primary transition-colors flex items-center gap-1.5">
+                                                    {user.name}
+                                                    {user.isBanned && <Badge className="h-4 px-1.5 rounded bg-rose-500 hover:bg-rose-500 text-[8px] font-black uppercase border-none">Suspended</Badge>}
+                                                </div>
+                                                <div className="text-[11px] font-medium text-muted-foreground/70">{user.email}</div>
+                                            </div>
+                                        </div>
+                                    </TableCell>
+                                    <TableCell className="py-5">
+                                        <Badge variant="outline" className="rounded-full px-3 py-0.5 text-[10px] font-black tracking-tighter bg-primary/5 text-primary border-primary/20">
+                                            {user.role}
+                                        </Badge>
+                                    </TableCell>
+                                    <TableCell className="py-5">
+                                        {user.verificationStatus === "VERIFIED" ? (
+                                            <div className="flex items-center gap-1.5 text-emerald-500 text-[11px] font-black uppercase tracking-tighter">
+                                                <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]"></div>
+                                                Verified
+                                            </div>
+                                        ) : user.verificationStatus === "REJECTED" ? (
+                                            <div className="flex items-center gap-1.5 text-rose-500 text-[11px] font-black uppercase tracking-tighter">
+                                                <div className="h-1.5 w-1.5 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.6)]"></div>
+                                                Rejected
+                                            </div>
+                                        ) : (
+                                            <div className="flex items-center gap-1.5 text-amber-500 text-[11px] font-black uppercase tracking-tighter">
+                                                <div className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse shadow-[0_0_8px_rgba(245,158,11,0.6)]"></div>
+                                                Pending
+                                            </div>
+                                        )}
+                                    </TableCell>
+                                    <TableCell className="py-5 text-right pr-6" onClick={(e) => e.stopPropagation()}>
+                                        <Button variant="outline" size="sm" asChild className="rounded-xl h-9 hover:bg-primary hover:text-white transition-all shadow-sm">
+                                            <Link href={`/dashboard/admin/users/${user.id}`}>
+                                                <MoreHorizontal className="h-4 w-4 mr-2" />
+                                                Moderate
+                                            </Link>
+                                        </Button>
+                                    </TableCell>
+                                </TableRow>
+                            ))
+                        ) : (
+                            <TableRow>
+                                <TableCell colSpan={4} className="h-64 text-center">
+                                    <div className="flex flex-col items-center gap-3 opacity-30 grayscale">
+                                        <Search className="h-12 w-12" />
+                                        <p className="text-sm font-bold uppercase tracking-widest">No matching identities found</p>
+                                    </div>
+                                </TableCell>
+                            </TableRow>
+                        )}
+                    </TableBody>
+                </Table>
+            </div>
         </div>
     );
 }

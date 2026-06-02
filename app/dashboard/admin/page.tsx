@@ -60,13 +60,6 @@ export default async function AdminDashboard({
         getProducts(),
     ]);
 
-    const fallbackStats = [
-        { title: "Total Users", value: "0", icon: Users, description: "Registered platform users" },
-        { title: "Total Products", value: "0", icon: Package, description: "Active listings" },
-        { title: "Total Orders", value: "0", icon: ShoppingCart, description: "Transactions handled" },
-        { title: "Active Reports", value: "0", icon: AlertTriangle, description: "Need attention" },
-    ];
-
     return (
         <div className="flex-1 space-y-8 p-8 pt-6">
             <div>
@@ -75,34 +68,9 @@ export default async function AdminDashboard({
                     Overview of the AGRINET system and user management.
                 </p>
             </div>
-            <StatsOverview stats={stats} />
-
-            {/*   Your static cards (kept, not removed) */}
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                {fallbackStats.map((stat) => {
-                    const Icon = stat.icon;
-                    return (
-                        <Card key={stat.title}>
-                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                <CardTitle className="text-sm font-medium">
-                                    {stat.title}
-                                </CardTitle>
-                                <Icon className="h-4 w-4 text-muted-foreground" />
-                            </CardHeader>
-                            <CardContent>
-                                <div className="text-2xl font-bold">{stat.value}</div>
-                                <p className="text-xs text-muted-foreground">
-                                    {stat.description}
-                                </p>
-                            </CardContent>
-                        </Card>
-                    );
-                })}
-            </div>
-
-            <Tabs value={defaultTab} className="space-y-4">
-
-                <TabsContent value="overview" className="space-y-4">
+            <Tabs value={defaultTab} className="space-y-6">
+                <TabsContent value="overview" className="space-y-8">
+                    <StatsOverview stats={stats} />
                     <AnalyticsCharts
                         usersByRole={stats.usersByRole}
                         ordersTrend={stats.ordersTrend}
@@ -124,8 +92,8 @@ export default async function AdminDashboard({
                 <TabsContent value="logs" className="space-y-4">
                     <AuditLogView logs={logs} />
                 </TabsContent>
-
             </Tabs>
+
         </div>
     );
 }

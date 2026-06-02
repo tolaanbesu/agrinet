@@ -14,17 +14,15 @@ async function checkAdmin() {
     if (!session || session.user.role !== "ADMIN") {
         throw new Error("Unauthorized");
     }
+    return session;
 }
 
-async function createAuditLog(action: string) {
-    const session = await auth.api.getSession({
-        headers: await headers(),
-    });
-    if (session?.user?.id) {
+async function createAuditLog(action: string, userId?: string) {
+    if (userId) {
         await prisma.auditLog.create({
             data: {
                 action,
-                performedBy: session.user.id,
+                performedBy: userId,
             },
         });
     }
@@ -94,14 +92,14 @@ export async function getAdminStats() {
 }
 
 export async function updateUserRole(userId: string, role: string) {
-    await checkAdmin();
+    const session = await checkAdmin();
 
     const user = await prisma.user.update({
         where: { id: userId },
         data: { role: role as any },
     });
 
-    await createAuditLog(`Updated role for ${user.email} to ${role}`);
+    await createAuditLog(`Updated role for ${user.email} to ${role}`, session.user.id);
     revalidatePath("/dashboard/admin");
 }
 
@@ -123,39 +121,64 @@ export async function getUsers(query?: string, role?: string, status?: string) {
     });
 }
 
-export async function updateVerificationStatus(userId: string, status: "VERIFIED" | "REJECTED") {
+export async function getUserById(id: string) {
     await checkAdmin();
+    return await prisma.user.findUnique({
+        where: { id },
+    });
+}
+
+
+export async function updateVerificationStatus(userId: string, status: "VERIFIED" | "REJECTED" | "PENDING") {
+    const session = await checkAdmin();
 
     const user = await prisma.user.update({
         where: { id: userId },
         data: { verificationStatus: status },
     });
 
-    await createAuditLog(`${status} user verification for ${user.email}`);
+    await createAuditLog(`${status} user verification for ${user.email}`, session.user.id);
     revalidatePath("/dashboard/admin");
 }
 
 export async function toggleUserBan(userId: string, ban: boolean) {
-    await checkAdmin();
+    const session = await checkAdmin();
 
     const user = await prisma.user.update({
         where: { id: userId },
         data: { isBanned: ban },
     });
 
-    await createAuditLog(`${ban ? "Banned" : "Unbanned"} user ${user.email}`);
+    await createAuditLog(`${ban ? "Banned" : "Unbanned"} user ${user.email}`, session.user.id);
     revalidatePath("/dashboard/admin");
 }
 
 export async function deleteUser(userId: string) {
-    await checkAdmin();
+    const session = await checkAdmin();
 
     const user = await prisma.user.findUnique({ where: { id: userId } });
+
+    // Manual cascading cleanup (bottom-up)
+    await prisma.cartItem.deleteMany({ where: { cart: { buyerId: userId } } });
+    await prisma.cart.deleteMany({ where: { buyerId: userId } });
+
+    await prisma.orderItem.deleteMany({ where: { order: { OR: [{ buyerId: userId }, { farmerId: userId }] } } });
+    await prisma.order.deleteMany({ where: { OR: [{ buyerId: userId }, { farmerId: userId }] } });
+
+    // Clean up products and their related items
+    const userProducts = await prisma.product.findMany({ where: { farmerId: userId } });
+    const productIds = userProducts.map(p => p.id);
+    await prisma.cartItem.deleteMany({ where: { productId: { in: productIds } } });
+    await prisma.orderItem.deleteMany({ where: { productId: { in: productIds } } });
+    await prisma.product.deleteMany({ where: { farmerId: userId } });
+
+    await prisma.auditLog.deleteMany({ where: { performedBy: userId } });
+
     await prisma.user.delete({
         where: { id: userId },
     });
 
-    await createAuditLog(`Deleted user ${user?.email}`);
+    await createAuditLog(`Deleted user ${user?.email}`, session.user.id);
     revalidatePath("/dashboard/admin");
 }
 
@@ -172,13 +195,33 @@ export async function getProducts() {
 }
 
 export async function toggleProductStatus(productId: string, status: "AVAILABLE" | "DRAFT") {
-    await checkAdmin();
+    const session = await checkAdmin();
     const product = await prisma.product.update({
         where: { id: productId },
         data: { status },
     });
-    await createAuditLog(`Changed product ${product.name} status to ${status}`);
+    await createAuditLog(`Changed product ${product.name} status to ${status}`, session.user.id);
     revalidatePath("/dashboard/admin");
+}
+
+export async function deleteProduct(productId: string) {
+    const session = await checkAdmin();
+    try {
+        const product = await prisma.product.findUnique({ where: { id: productId } });
+
+        // Manual cleanup as a safeguard against cascade isues
+        await prisma.cartItem.deleteMany({ where: { productId } });
+        await prisma.orderItem.deleteMany({ where: { productId } });
+
+        await prisma.product.delete({
+            where: { id: productId },
+        });
+        await createAuditLog(`Deleted product ${product?.name}`, session.user.id);
+        revalidatePath("/dashboard/admin");
+    } catch (error) {
+        console.error("Product deletion failed:", error);
+        throw error;
+    }
 }
 
 export async function getAuditLogs() {
@@ -222,12 +265,7 @@ export async function getMarketAlerts() {
 }
 
 export async function createMarketAlert(data: { title: string, description: string, region: string }) {
-    await checkAdmin();
-    const session = await auth.api.getSession({
-        headers: await headers(),
-    });
-
-    if (!session?.user?.id) throw new Error("Unauthorized");
+    const session = await checkAdmin();
 
     const titleVal = titleSchema.safeParse(data.title);
     if (!titleVal.success) {
@@ -246,7 +284,7 @@ export async function createMarketAlert(data: { title: string, description: stri
         },
     });
 
-    await createAuditLog(`Created market alert: ${data.title}`);
+    await createAuditLog(`Created market alert: ${data.title}`, session.user.id);
     revalidatePath("/dashboard/admin");
     return alert;
 }
