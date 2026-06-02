@@ -157,6 +157,23 @@ export async function deleteUser(userId: string) {
     const session = await checkAdmin();
 
     const user = await prisma.user.findUnique({ where: { id: userId } });
+
+    // Manual cascading cleanup (bottom-up)
+    await prisma.cartItem.deleteMany({ where: { cart: { buyerId: userId } } });
+    await prisma.cart.deleteMany({ where: { buyerId: userId } });
+
+    await prisma.orderItem.deleteMany({ where: { order: { OR: [{ buyerId: userId }, { farmerId: userId }] } } });
+    await prisma.order.deleteMany({ where: { OR: [{ buyerId: userId }, { farmerId: userId }] } });
+
+    // Clean up products and their related items
+    const userProducts = await prisma.product.findMany({ where: { farmerId: userId } });
+    const productIds = userProducts.map(p => p.id);
+    await prisma.cartItem.deleteMany({ where: { productId: { in: productIds } } });
+    await prisma.orderItem.deleteMany({ where: { productId: { in: productIds } } });
+    await prisma.product.deleteMany({ where: { farmerId: userId } });
+
+    await prisma.auditLog.deleteMany({ where: { performedBy: userId } });
+
     await prisma.user.delete({
         where: { id: userId },
     });
@@ -189,12 +206,22 @@ export async function toggleProductStatus(productId: string, status: "AVAILABLE"
 
 export async function deleteProduct(productId: string) {
     const session = await checkAdmin();
-    const product = await prisma.product.findUnique({ where: { id: productId } });
-    await prisma.product.delete({
-        where: { id: productId },
-    });
-    await createAuditLog(`Deleted product ${product?.name}`, session.user.id);
-    revalidatePath("/dashboard/admin");
+    try {
+        const product = await prisma.product.findUnique({ where: { id: productId } });
+
+        // Manual cleanup as a safeguard against cascade isues
+        await prisma.cartItem.deleteMany({ where: { productId } });
+        await prisma.orderItem.deleteMany({ where: { productId } });
+
+        await prisma.product.delete({
+            where: { id: productId },
+        });
+        await createAuditLog(`Deleted product ${product?.name}`, session.user.id);
+        revalidatePath("/dashboard/admin");
+    } catch (error) {
+        console.error("Product deletion failed:", error);
+        throw error;
+    }
 }
 
 export async function getAuditLogs() {

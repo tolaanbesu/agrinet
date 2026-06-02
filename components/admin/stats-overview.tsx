@@ -62,7 +62,7 @@ export function StatsOverview({ stats }: StatsOverviewProps) {
             {items.map((item, index) => (
                 <Card 
                     key={item.title} 
-                    className={`border-none shadow-xl ${item.shadow} group hover:scale-[1.02] transition-all duration-500 overflow-hidden relative`}
+                    className="border border-muted/50 shadow-sm group hover:scale-[1.01] transition-all duration-500 overflow-hidden relative"
                 >
                     <div className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${item.gradient} opacity-[0.03] group-hover:opacity-10 rounded-full -mr-12 -mt-12 transition-all duration-700`}></div>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
@@ -74,7 +74,7 @@ export function StatsOverview({ stats }: StatsOverviewProps) {
                     <CardContent>
                         <div className="flex items-baseline gap-2">
                              <div className="text-3xl font-black tracking-tighter">{item.value.toLocaleString()}</div>
-                             <div className="text-[10px] font-bold text-emerald-500 flex items-center bg-emerald-500/10 px-1.5 py-0.5 rounded-full">
+                             <div className="text-[10px] font-bold text-emerald-500 flex items-center bg-emerald-500/5 px-1.5 py-0.5 rounded-full">
                                 <TrendingUp className="h-2.5 w-2.5 mr-0.5" />
                                 +2%
                              </div>

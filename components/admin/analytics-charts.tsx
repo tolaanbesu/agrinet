@@ -32,7 +32,7 @@ const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#8b5cf6", "#ef4444"];
 export function AnalyticsCharts({ usersByRole, ordersTrend }: AnalyticsChartsProps) {
     return (
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-7">
-            <Card className="lg:col-span-4 border-none shadow-2xl bg-card/60 backdrop-blur-xl ring-1 ring-black/5 overflow-hidden">
+            <Card className="lg:col-span-4 border border-muted/50 shadow-md bg-card/40 backdrop-blur-xl overflow-hidden">
                 <CardHeader className="pb-0 pt-6 px-6">
                     <div className="flex items-center justify-between">
                         <div>
@@ -114,7 +114,7 @@ export function AnalyticsCharts({ usersByRole, ordersTrend }: AnalyticsChartsPro
                 </CardContent>
             </Card>
 
-            <Card className="lg:col-span-3 border-none shadow-2xl bg-card/60 backdrop-blur-xl ring-1 ring-black/5 flex flex-col">
+            <Card className="lg:col-span-3 border border-muted/50 shadow-md bg-card/40 backdrop-blur-xl flex flex-col">
                 <CardHeader className="pt-6 px-6">
                     <CardTitle className="text-xl font-black tracking-tight">Ecosystem Mix</CardTitle>
                     <CardDescription className="text-xs font-medium uppercase tracking-widest text-muted-foreground/60 mt-1">
