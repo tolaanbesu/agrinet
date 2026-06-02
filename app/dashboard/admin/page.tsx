@@ -75,34 +75,34 @@ export default async function AdminDashboard({
                     Overview of the AGRINET system and user management.
                 </p>
             </div>
-            <StatsOverview stats={stats} />
+            <Tabs value={defaultTab} className="space-y-6">
+                <TabsContent value="overview" className="space-y-8">
+                    <StatsOverview stats={stats} />
+                    
+                    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+                        {fallbackStats.map((stat) => {
+                            const Icon = stat.icon;
+                            return (
+                                <Card key={stat.title} className="border-none shadow-md bg-gradient-to-br from-card to-muted/30">
+                                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                        <CardTitle className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                                            {stat.title}
+                                        </CardTitle>
+                                        <div className="p-2 bg-primary/10 rounded-lg">
+                                            <Icon className="h-4 w-4 text-primary" />
+                                        </div>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <div className="text-3xl font-bold tracking-tight">{stat.value}</div>
+                                        <p className="text-xs text-muted-foreground mt-1">
+                                            {stat.description}
+                                        </p>
+                                    </CardContent>
+                                </Card>
+                            );
+                        })}
+                    </div>
 
-            {/*   Your static cards (kept, not removed) */}
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                {fallbackStats.map((stat) => {
-                    const Icon = stat.icon;
-                    return (
-                        <Card key={stat.title}>
-                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                <CardTitle className="text-sm font-medium">
-                                    {stat.title}
-                                </CardTitle>
-                                <Icon className="h-4 w-4 text-muted-foreground" />
-                            </CardHeader>
-                            <CardContent>
-                                <div className="text-2xl font-bold">{stat.value}</div>
-                                <p className="text-xs text-muted-foreground">
-                                    {stat.description}
-                                </p>
-                            </CardContent>
-                        </Card>
-                    );
-                })}
-            </div>
-
-            <Tabs value={defaultTab} className="space-y-4">
-
-                <TabsContent value="overview" className="space-y-4">
                     <AnalyticsCharts
                         usersByRole={stats.usersByRole}
                         ordersTrend={stats.ordersTrend}
@@ -124,8 +124,8 @@ export default async function AdminDashboard({
                 <TabsContent value="logs" className="space-y-4">
                     <AuditLogView logs={logs} />
                 </TabsContent>
-
             </Tabs>
+
         </div>
     );
 }
