@@ -61,9 +61,7 @@ export default function Footer() {
                   <p className="text-sm text-muted-foreground text-center md:text-left">
                      &copy; {new Date().getFullYear()} Agrinet Marketplace. All rights reserved.
                   </p>
-                  <p className="text-xs text-muted-foreground/60 text-center md:text-left font-medium">
-                     Powered by Hulu Labs
-                  </p>
+                  
                </div>
                <div className="flex flex-wrap justify-center gap-6">
                   <Link href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">Privacy Policy</Link>
