@@ -119,7 +119,7 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
                                     <div className="absolute bottom-4 right-4 glass px-4 py-2 rounded-2xl shadow-lg backdrop-blur-md bg-background/80 border border-white/20 dark:border-black/20">
                                         <div className="flex items-baseline gap-1">
                                             <span className="text-lg font-bold text-primary">{product.price}</span>
-                                            <span className="text-xs font-medium text-foreground uppercase">birr/{product.unit}</span>
+                                            <span className="text-xs font-medium text-foreground uppercase">ETB/{product.unit}</span>
                                         </div>
                                     </div>
                                 </div>

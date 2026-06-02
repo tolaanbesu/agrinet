@@ -169,7 +169,7 @@ export function CheckoutClient({ cart, session }: { cart: any, session: any }) {
                                         <span className="font-medium">{item.product.name}</span>
                                         <span className="text-muted-foreground text-xs">Qty: {item.quantity}</span>
                                     </div>
-                                    <span className="font-medium">{(item.product.price * item.quantity).toFixed(2)}ETB</span>
+                                    <span className="font-medium">{(item.product.price * item.quantity).toFixed(2)} ETB</span>
                                 </div>
                             ))}
                         </div>
@@ -177,7 +177,7 @@ export function CheckoutClient({ cart, session }: { cart: any, session: any }) {
                         <div className="pt-4 space-y-2">
                             <div className="flex justify-between text-sm">
                                 <span className="text-muted-foreground">Subtotal</span>
-                                <span>{subtotal.toFixed(2)}ETB</span>
+                                <span>{subtotal.toFixed(2)} ETB</span>
                             </div>
                             <div className="flex justify-between text-sm">
                                 <span className="text-muted-foreground">Shipping</span>
@@ -185,7 +185,7 @@ export function CheckoutClient({ cart, session }: { cart: any, session: any }) {
                             </div>
                             <div className="border-t pt-4 flex justify-between font-bold text-lg">
                                 <span>Total</span>
-                                <span>{subtotal.toFixed(2)}ETB</span>
+                                <span>{subtotal.toFixed(2)} ETB</span>
                             </div>
                         </div>
                     </CardContent>

@@ -19,6 +19,7 @@ model User {
   profileImage         String?
   verificationStatus   VerificationStatus @default(PENDING)
   createdAt            DateTime           @default(now())
+  isBanned             Boolean            @default(false)
   updatedAt            DateTime           @updatedAt
   verificationDocument String?
   accounts             Account[]
@@ -39,6 +40,7 @@ model User {
 
   @@map("user")
 }
+
 
 model Session {
   id        String   @id
@@ -141,8 +143,8 @@ model Order {
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
   tx_ref        String?
-  buyer         User          @relation("BuyerOrders", fields: [buyerId], references: [id])
-  farmer        User          @relation("FarmerOrders", fields: [farmerId], references: [id])
+  buyer         User          @relation("BuyerOrders", fields: [buyerId], references: [id], onDelete: Cascade)
+  farmer        User          @relation("FarmerOrders", fields: [farmerId], references: [id], onDelete: Cascade)
   items         OrderItem[]
 
   @@index([buyerId])
@@ -157,7 +159,7 @@ model OrderItem {
   quantity  Float
   price     Float
   order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  product   Product @relation(fields: [productId], references: [id])
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@index([orderId])
   @@index([productId])
@@ -171,8 +173,8 @@ model Chat {
   message    String
   read       Boolean  @default(false)
   createdAt  DateTime @default(now())
-  receiver   User     @relation("ReceivedMessages", fields: [receiverId], references: [id])
-  sender     User     @relation("SentMessages", fields: [senderId], references: [id])
+  receiver   User     @relation("ReceivedMessages", fields: [receiverId], references: [id], onDelete: Cascade)
+  sender     User     @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
 
   @@index([senderId])
   @@index([receiverId])
@@ -188,7 +190,7 @@ model Article {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   imageUrl  String?
-  expert    User     @relation(fields: [expertId], references: [id])
+  expert    User     @relation(fields: [expertId], references: [id], onDelete: Cascade)
 
   @@index([expertId])
   @@map("article")
@@ -203,8 +205,8 @@ model FarmerQuery {
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
   expertId       String?
-  expert         User?       @relation("ExpertQueries", fields: [expertId], references: [id])
-  farmer         User        @relation("FarmerQueries", fields: [farmerId], references: [id])
+  expert         User?       @relation("ExpertQueries", fields: [expertId], references: [id], onDelete: SetNull)
+  farmer         User        @relation("FarmerQueries", fields: [farmerId], references: [id], onDelete: Cascade)
 
   @@index([farmerId])
   @@index([expertId])
@@ -218,7 +220,7 @@ model MarketAlert {
   region      String
   postedById  String
   createdAt   DateTime @default(now())
-  postedBy    User     @relation(fields: [postedById], references: [id])
+  postedBy    User     @relation(fields: [postedById], references: [id], onDelete: Cascade)
 
   @@index([postedById])
   @@map("market_alert")
@@ -230,8 +232,8 @@ model Report {
   reportedUserId String
   reason         String
   createdAt      DateTime @default(now())
-  reportedUser   User     @relation("ReportsReceived", fields: [reportedUserId], references: [id])
-  reporter       User     @relation("ReportsSent", fields: [reporterId], references: [id])
+  reportedUser   User     @relation("ReportsReceived", fields: [reportedUserId], references: [id], onDelete: Cascade)
+  reporter       User     @relation("ReportsSent", fields: [reporterId], references: [id], onDelete: Cascade)
 
   @@index([reporterId])
   @@index([reportedUserId])
@@ -243,7 +245,7 @@ model AuditLog {
   action      String
   performedBy String
   timestamp   DateTime @default(now())
-  user        User     @relation(fields: [performedBy], references: [id])
+  user        User     @relation(fields: [performedBy], references: [id], onDelete: Cascade)
 
   @@index([performedBy])
   @@map("audit_log")

@@ -94,7 +94,7 @@ export default async function FarmerStorePage({
 
                             {/* Price */}
                             <Badge>
-                                {product.price} birr / {product.unit}
+                                {product.price} ETB / {product.unit}
                             </Badge>
                             <AddToCartButton
                                 productId={product.id}

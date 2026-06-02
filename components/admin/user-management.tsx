@@ -19,10 +19,11 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, ShieldAlert, ShieldCheck, UserX, UserCheck, Trash2 } from "lucide-react";
+import { ShieldAlert, ShieldCheck, UserX, UserCheck, Trash2, ExternalLink } from "lucide-react";
 import { toggleUserBan, updateVerificationStatus, deleteUser } from "@/actions/admin-actions";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import Link from "next/link";
 
 interface UserManagementProps {
     initialUsers: any[];
@@ -76,7 +77,11 @@ export function UserManagement({ initialUsers }: UserManagementProps) {
                 </TableHeader>
                 <TableBody>
                     {users.map((user) => (
-                        <TableRow key={user.id}>
+                        <TableRow 
+                            key={user.id}
+                            className="cursor-pointer hover:bg-muted/50"
+                            onClick={() => window.location.href = `/dashboard/admin/users/${user.id}`}
+                        >
                             <TableCell className="flex items-center gap-3">
                                 <Avatar className="h-8 w-8">
                                     <AvatarImage src={user.image} />
@@ -104,41 +109,12 @@ export function UserManagement({ initialUsers }: UserManagementProps) {
                                     <Badge variant="default" className="bg-green-500 hover:bg-green-600 border-none">ACTIVE</Badge>
                                 )}
                             </TableCell>
-                            <TableCell className="text-right">
-                                <DropdownMenu>
-                                    <DropdownMenuTrigger asChild>
-                                        <Button variant="ghost" className="h-8 w-8 p-0">
-                                            <MoreHorizontal className="h-4 w-4" />
-                                        </Button>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent align="end">
-                                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                        <DropdownMenuItem onClick={() => handleToggleBan(user.id, user.isBanned)}>
-                                            {user.isBanned ? <UserCheck className="mr-2 h-4 w-4" /> : <UserX className="mr-2 h-4 w-4" />}
-                                            {user.isBanned ? "Unban User" : "Ban User"}
-                                        </DropdownMenuItem>
-
-                                        {user.verificationStatus === "PENDING" && (
-                                            <>
-                                                <DropdownMenuSeparator />
-                                                <DropdownMenuItem onClick={() => handleVerify(user.id, "VERIFIED")}>
-                                                    <ShieldCheck className="mr-2 h-4 w-4 text-green-500" />
-                                                    Approve
-                                                </DropdownMenuItem>
-                                                <DropdownMenuItem onClick={() => handleVerify(user.id, "REJECTED")}>
-                                                    <ShieldAlert className="mr-2 h-4 w-4 text-red-500" />
-                                                    Reject
-                                                </DropdownMenuItem>
-                                            </>
-                                        )}
-
-                                        <DropdownMenuSeparator />
-                                        <DropdownMenuItem onClick={() => handleDelete(user.id)} className="text-red-600">
-                                            <Trash2 className="mr-2 h-4 w-4" />
-                                            Delete User
-                                        </DropdownMenuItem>
-                                    </DropdownMenuContent>
-                                </DropdownMenu>
+                            <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
+                                <Button variant="outline" size="sm" asChild>
+                                    <Link href={`/dashboard/admin/users/${user.id}`}>
+                                        Manage
+                                    </Link>
+                                </Button>
                             </TableCell>
                         </TableRow>
                     ))}

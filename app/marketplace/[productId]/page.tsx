@@ -119,7 +119,7 @@ export default async function ProductDetailsPage({
                         {/* Price Block */}
                         <div className="mb-6">
                             <div className="flex items-end gap-2 mb-1">
-                                <span className="text-4xl font-bold tracking-tight text-foreground">{product.price} birr</span>
+                                <span className="text-4xl font-bold tracking-tight text-foreground">{product.price} ETB</span>
                                 <span className="text-lg text-muted-foreground mb-1">/ {product.unit}</span>
                             </div>
                             <p className="text-sm text-green-600 font-medium flex items-center gap-1.5 mt-2">

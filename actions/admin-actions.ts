@@ -14,17 +14,15 @@ async function checkAdmin() {
     if (!session || session.user.role !== "ADMIN") {
         throw new Error("Unauthorized");
     }
+    return session;
 }
 
-async function createAuditLog(action: string) {
-    const session = await auth.api.getSession({
-        headers: await headers(),
-    });
-    if (session?.user?.id) {
+async function createAuditLog(action: string, userId?: string) {
+    if (userId) {
         await prisma.auditLog.create({
             data: {
                 action,
-                performedBy: session.user.id,
+                performedBy: userId,
             },
         });
     }
@@ -94,14 +92,14 @@ export async function getAdminStats() {
 }
 
 export async function updateUserRole(userId: string, role: string) {
-    await checkAdmin();
+    const session = await checkAdmin();
 
     const user = await prisma.user.update({
         where: { id: userId },
         data: { role: role as any },
     });
 
-    await createAuditLog(`Updated role for ${user.email} to ${role}`);
+    await createAuditLog(`Updated role for ${user.email} to ${role}`, session.user.id);
     revalidatePath("/dashboard/admin");
 }
 
@@ -123,39 +121,47 @@ export async function getUsers(query?: string, role?: string, status?: string) {
     });
 }
 
-export async function updateVerificationStatus(userId: string, status: "VERIFIED" | "REJECTED") {
+export async function getUserById(id: string) {
     await checkAdmin();
+    return await prisma.user.findUnique({
+        where: { id },
+    });
+}
+
+
+export async function updateVerificationStatus(userId: string, status: "VERIFIED" | "REJECTED" | "PENDING") {
+    const session = await checkAdmin();
 
     const user = await prisma.user.update({
         where: { id: userId },
         data: { verificationStatus: status },
     });
 
-    await createAuditLog(`${status} user verification for ${user.email}`);
+    await createAuditLog(`${status} user verification for ${user.email}`, session.user.id);
     revalidatePath("/dashboard/admin");
 }
 
 export async function toggleUserBan(userId: string, ban: boolean) {
-    await checkAdmin();
+    const session = await checkAdmin();
 
     const user = await prisma.user.update({
         where: { id: userId },
         data: { isBanned: ban },
     });
 
-    await createAuditLog(`${ban ? "Banned" : "Unbanned"} user ${user.email}`);
+    await createAuditLog(`${ban ? "Banned" : "Unbanned"} user ${user.email}`, session.user.id);
     revalidatePath("/dashboard/admin");
 }
 
 export async function deleteUser(userId: string) {
-    await checkAdmin();
+    const session = await checkAdmin();
 
     const user = await prisma.user.findUnique({ where: { id: userId } });
     await prisma.user.delete({
         where: { id: userId },
     });
 
-    await createAuditLog(`Deleted user ${user?.email}`);
+    await createAuditLog(`Deleted user ${user?.email}`, session.user.id);
     revalidatePath("/dashboard/admin");
 }
 
@@ -172,12 +178,12 @@ export async function getProducts() {
 }
 
 export async function toggleProductStatus(productId: string, status: "AVAILABLE" | "DRAFT") {
-    await checkAdmin();
+    const session = await checkAdmin();
     const product = await prisma.product.update({
         where: { id: productId },
         data: { status },
     });
-    await createAuditLog(`Changed product ${product.name} status to ${status}`);
+    await createAuditLog(`Changed product ${product.name} status to ${status}`, session.user.id);
     revalidatePath("/dashboard/admin");
 }
 
@@ -222,12 +228,7 @@ export async function getMarketAlerts() {
 }
 
 export async function createMarketAlert(data: { title: string, description: string, region: string }) {
-    await checkAdmin();
-    const session = await auth.api.getSession({
-        headers: await headers(),
-    });
-
-    if (!session?.user?.id) throw new Error("Unauthorized");
+    const session = await checkAdmin();
 
     const titleVal = titleSchema.safeParse(data.title);
     if (!titleVal.success) {
@@ -246,7 +247,7 @@ export async function createMarketAlert(data: { title: string, description: stri
         },
     });
 
-    await createAuditLog(`Created market alert: ${data.title}`);
+    await createAuditLog(`Created market alert: ${data.title}`, session.user.id);
     revalidatePath("/dashboard/admin");
     return alert;
 }
