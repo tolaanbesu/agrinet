@@ -139,7 +139,7 @@ export default async function FarmerDashboard() {
                 {stats.map((stat) => {
                     const Icon = stat.icon;
                     return (
-                        <Card key={stat.title} className="border-none shadow-sm ring-1 ring-slate-200">
+                        <Card key={stat.title}>
                             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                                 <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
                                 <Icon className="h-4 w-4 text-muted-foreground" />
@@ -154,7 +154,7 @@ export default async function FarmerDashboard() {
             </div>
 
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-                <Card className="col-span-4 border-none shadow-sm ring-1 ring-slate-200">
+                <Card className="col-span-4">
                     <CardHeader><CardTitle>Sales Overview</CardTitle></CardHeader>
                     <CardContent className="h-[300px]">
                         {salesData.length === 0 ? (
@@ -163,7 +163,7 @@ export default async function FarmerDashboard() {
                     </CardContent>
                 </Card>
 
-                <Card className="col-span-3 border-none shadow-sm ring-1 ring-slate-200">
+                <Card className="col-span-3">
                     <CardHeader>
                         <CardTitle>Recent Orders</CardTitle>
                         <CardDescription>Latest orders from buyers</CardDescription>
@@ -179,7 +179,7 @@ export default async function FarmerDashboard() {
                                         <p className="text-xs text-muted-foreground uppercase font-bold tracking-tighter">{order.status}</p>
 
                                        
-                                       
+
                                         {/* REPORT BUTTON */}
                                     {order.buyer && (
                                         reportedBuyerIds.has(order.buyer.id) ? (
